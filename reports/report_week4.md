@@ -17,7 +17,7 @@ Nainštalovanie a rozbehnutie vývojového prostredia. 2271ea628bbddb95df57ab67f
 Choroba
 
 # Plán na ďalší týždeň:
-Doupraviť špecifikáciu.
+Doupraviť špecifikáciu. Begin backend.
 
 # Problémy:
 Žiadne.
