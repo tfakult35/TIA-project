@@ -11,7 +11,7 @@
 Learning the required technologies, begin frontend. 
 
 # Vykonaná práca:
-Nainštalovanie a rozbehnutie vývojového prostredia. 
+Nainštalovanie a rozbehnutie vývojového prostredia. 2271ea628bbddb95df57ab67fa47be6918b2b171
 
 # Zdôvodnenie rozdielov medzi plánom a vykonanou prácou:
 Choroba
