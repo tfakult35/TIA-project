@@ -1,8 +1,12 @@
 import FileNote from './FileNote'
 
-function FileStore(props: any){
+function FileStore(){
     return (
-        
+        <div>
+
+
+
+        </div>
     )
 }
 
