@@ -1,27 +1,15 @@
+import FileNoteTree from "../classtypes/FileNoteTree"; 
 import FileNoteType from "../classtypes/FileNoteType";
 
-const TEST1:FileNoteType[] = 
-[
-    new FileNoteType(1,"hello","hello","hellohellohellohellohellohellohellohellohello",
-        new Date(),new Date(),"hellohellohellohello"),
-    new FileNoteType(2,"hello2","hello","hellohellohellohellohellohellohellohellohello",
-        new Date(),new Date(),"hellohellohellohello"),
-    new FileNoteType(3,"hello3","hello","hellohellohellohellohellohellohellohellohello",
-        new Date(),new Date(),"hellohellohellohello"),
-    new FileNoteType(4,"hello4","hello","hellohellohellohellohellohellohellohellohello",
-        new Date(),new Date(),"hellohellohellohello")
-];
+const e0 = new FileNoteType(0,"hello0","hellohello0","content0",new Date(),new Date(),"topic0");
+const e1 = new FileNoteType(1,"hello1","hellohello1","content0",new Date(),new Date(),"topic0");
+const e2 = new FileNoteType(2,"hello2","hellohello2","content0",new Date(),new Date(),"topic0");
+const e3 = new FileNoteType(3,"hello3","hellohello3","content0",new Date(),new Date(),"topic0");
 
-export const TEST1MAP:Map<Number,FileNoteType> = new Map<Number,FileNoteType>();
-for(let i = 1; i < TEST1.length +1; i++){
-    TEST1MAP.set(i,TEST1[i-1]);
-}
+const TEST_TREE:FileNoteTree = new FileNoteTree(new Map<Number,Number[]>(),new Map<Number,FileNoteType>());
+TEST_TREE.addFileNote(e0,-1);
+TEST_TREE.addFileNote(e1,-1);
+TEST_TREE.addFileNote(e2,0);
+TEST_TREE.addFileNote(e3,0);
 
-export const TEST1TREE:Map<Number,Number[]> = new Map<Number,Number[]>()
-TEST1TREE.set(1,[3,4]);
-TEST1TREE.set(2,[]);
-TEST1TREE.set(3,[]);
-TEST1TREE.set(4,[]);
-
-
-export default TEST1
+export default TEST_TREE
