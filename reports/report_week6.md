@@ -5,7 +5,7 @@
 
 # Info o reportovanej verzii:  
 - Tag: week6                       
-- Obdobie: 5. týždeň, 23.3. - 30.3.2025 
+- Obdobie: 6. týždeň, 23.3. - 30.3.2025 
 
 # Plán:
 "Develop group management and friendship functionality."

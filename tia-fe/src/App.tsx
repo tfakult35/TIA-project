@@ -14,6 +14,7 @@ function App() {
 
   const fileNoteTree = TEST_TREE;
 
+  //header then split container 1/4 FileStore, 3/4 text editor (adjustable?)
   return (
     <>
     <Header/>

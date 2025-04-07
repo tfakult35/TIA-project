@@ -8,9 +8,9 @@ interface FileStoreProp {
 
 const FileStore: React.FC<FileStoreProp> = ({fileNoteTree}) =>{
 
+    //add scroll-ability, vertical, (horizontal?)
+    //button - add new (root) file - you have to name it
 
-
-    
     return (
         <div>
             <ul>
