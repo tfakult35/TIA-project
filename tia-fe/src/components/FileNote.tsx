@@ -14,7 +14,7 @@ const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree}) => {
 
     //pass setter for text editor as a prop 
     //when name clicked - the text appears in text editor and its saved
-    //collapsable hierarchy - when click on arrow > - children collapse
+    //***collapsable hierarchy - when click on arrow > - children collapse
     //RIGHT click - menu: add child, delete note, rename, (change parent?)
     //            - changes the tree
 
@@ -28,10 +28,11 @@ const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree}) => {
 
     return(
 
-    <div>
-      <div onClick={onNameClick} >{fileNote.name}</div>
-      <span onClick={onExpand}> {hasChildren ? (isOpen ? "▼" : "▶"):""} </span>
-
+    <div className="file-note">
+      <div className="file-note-header">
+        <div className="file-note-name" onClick={onNameClick} >{fileNote.name}</div>
+        <div className="file-note-button" onClick={onExpand}> {hasChildren ? (isOpen ? "/" : "|"):""} </div>
+      </div>
 
       {fileNoteTree.getChildrenFN(fileNote.id).length > 0 && isOpen && (
         <ul>

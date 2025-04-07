@@ -1,0 +1,43 @@
+.file-store {
+    color:white;
+    background-color: #242929;
+    height: 100%;
+}
+
+.file-store > ul {
+    list-style-type: none;
+}
+
+
+
+
+.file-note-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background-color: #4a5152;
+    border: solid;
+    border-color: #242929;
+    margin-right: 3%;
+
+  }
+
+  .file-note ul {
+    list-style-type: square;
+  }
+  
+  .file-note-name {
+    cursor: pointer;
+    flex-grow: 1;
+    margin-left: 3%;
+  }
+  
+  .file-note-button {
+    cursor: pointer;
+    margin-right: 3%;
+    padding-inline: 3%;
+    font-weight: bold;
+    
+    
+  }

@@ -6,13 +6,13 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import TEST_TREE from './dummy_data/dummy_data'
 import FileNoteType from './classtypes/FileNoteType'
 import FileNote from './components/FileNote'
-
-
+import TextEditor from './components/TextEditor'
 
 
 function App() {
 
   const fileNoteTree = TEST_TREE;
+  
 
   //header then split container 1/4 FileStore, 3/4 text editor (adjustable?)
   return (
@@ -21,9 +21,19 @@ function App() {
     
     
     <div className='container'>
-      <FileStore fileNoteTree={fileNoteTree}>
+      <div className='row'>
+        <div className='col-3'>  
+          <FileStore fileNoteTree={fileNoteTree}>
 
-      </FileStore>
+          </FileStore>
+        </div>
+        <div className='col-9'>
+          <TextEditor>
+
+          </TextEditor>
+        </div>
+
+      </div>
     
     </div>
     </>
