@@ -1,5 +1,5 @@
 import FileNoteType from "../classtypes/FileNoteType"
-import { ReactNode, useState } from "react"
+import { ReactNode, SetStateAction, useState } from "react"
 import FileNoteTree from "../classtypes/FileNoteTree";
 
 
@@ -7,9 +7,10 @@ interface FileNoteProps {
 
     fileNote:FileNoteType;
     fileNoteTree:FileNoteTree;
+    setCurrentFile:React.Dispatch<SetStateAction<number>>;
 }
 
-const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree}) => {
+const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree,setCurrentFile}) => {
 
 
     //pass setter for text editor as a prop 
@@ -20,7 +21,7 @@ const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree}) => {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    const onNameClick = () => {alert("Clicked on " + fileNote.name)};
+    const onNameClick = () => {setCurrentFile(fileNote.id)};
     const onExpand = () => {setIsOpen(!isOpen)};  
 
     const hasChildren = fileNoteTree.getChildrenFN(fileNote.id).length > 0;
@@ -38,7 +39,7 @@ const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree}) => {
         <ul>
           {fileNoteTree.getChildrenFN(fileNote.id).map((childNote) => (
             <li key={childNote.id}>
-              <FileNote fileNote={childNote} fileNoteTree={fileNoteTree} />
+              <FileNote fileNote={childNote} fileNoteTree={fileNoteTree} setCurrentFile={setCurrentFile}/>
             </li>
           ))}
         </ul>
