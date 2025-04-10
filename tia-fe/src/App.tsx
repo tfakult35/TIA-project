@@ -11,6 +11,7 @@ function App() {
 
   const fileNoteTree = TEST_TREE;
   const [currentFile, setCurrentFile] = useState<number>(-1);
+  
 
   //header then split container 1/4 FileStore, 3/4 text editor (adjustable?)
   return (
@@ -26,7 +27,7 @@ function App() {
           </FileStore>
         </div>
         <div className='col-9'>
-          <TextEditor currentFile={currentFile} fileNoteTree={fileNoteTree}>
+          <TextEditor currentFile={currentFile} setCurrentFile={setCurrentFile} fileNoteTree={fileNoteTree}>
 
           </TextEditor>
         </div>

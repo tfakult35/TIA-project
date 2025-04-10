@@ -12,9 +12,13 @@ const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile}) =>{
 
     //add scroll-ability, vertical, (horizontal?)
     //button - add new (root) file - you have to name it
+    const handleAddFileNote = () => {
+        
+    }
 
     return (
         <div className="file-store">
+            <button>+</button>
             <ul>
 
             {[...fileNoteTree].map((fileNote) => (

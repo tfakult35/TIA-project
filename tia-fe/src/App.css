@@ -32,6 +32,8 @@
   overflow-y: auto;
 }
 
+
+
 .app-fe, html {
   background: linear-gradient(45deg,#514c3d,#2f2f2f);
 }
@@ -40,38 +42,38 @@
 
 
 .file-note-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
       /*383838*/
-    background-color: #383838;    
-    border: solid;
-    border-color: grey;
-    border-width: thin;
+  background-color: #383838;    
+  border: solid;
+  border-color: grey;
+  border-width: thin;
     
-    margin:1%;
-    
-
+  margin:1%;
     
 
-  }
+}
 
-  .file-note ul {
-    list-style-type: none;
-    padding-left: 4%;
-  }
+.file-note-header:hover{
+  background-color: rgb(90, 90, 90);
+}
+
+.file-note ul {
+  list-style-type: none;
+  padding-left: 4%;
+}
   
-  .file-note-name {
-    cursor: pointer;
-    flex-grow: 1;
-    margin-left: 3%;
-  }
+.file-note-name {
+  cursor: pointer;
+  flex-grow: 1;
+  margin-left: 3%;
+}
   
-  .file-note-button {
-    cursor: pointer;
-    margin-right: 3%;
-    padding-inline: 3%;
-    font-weight: bold;
-    
-    
-  }
+.file-note-button {
+  cursor: pointer;
+  margin-right: 3%;
+  padding-inline: 3%;
+  font-weight: bold;  
+}

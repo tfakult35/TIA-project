@@ -6,7 +6,7 @@ class FileNoteTree{
 
     //gets taken from database
     constructor(private hierarchyMap:Map<Number,Number[]>,private idMap:Map<Number, FileNoteType>){
-        if(this.hierarchyMap.keys.length != this.idMap.keys.length){
+        if(this.hierarchyMap.size != this.idMap.size){
             throw Error("ERROR!: keys don't match.");
         }
 
@@ -111,6 +111,13 @@ class FileNoteTree{
                 return { done: false, value: note! };
             }
         };
+    }
+
+    public setContent(id:number, content:string):void {
+        const fileNote = this.idMap.get(id);
+        if(fileNote === undefined) throw Error("Setcontent");
+        fileNote.content = content;
+        this.idMap.set(id,fileNote);
     }
 
 }
