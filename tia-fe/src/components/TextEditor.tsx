@@ -33,7 +33,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fi
     if(!editor){
         return;
     }else{
-      fileNoteTree.setContent(currentFile,editor.getText()) 
+      fileNoteTree.setContent(currentFile,editor.getHTML()) 
     }
     //must change state in notefile - last modified, size of content in info context menu 
     // - use dummy variable here? or send the values themselves

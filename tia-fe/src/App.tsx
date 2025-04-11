@@ -5,6 +5,11 @@ import FileStore from './components/FileStore'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import TEST_TREE from './dummy_data/dummy_data'
 import TextEditor from './components/TextEditor'
+import { BrowserRouter, Route, Routes} from 'react-router-dom'
+
+import Home from './pages/Home'
+import LogInPage from './pages/LogInPage'
+
 
 
 function App() {
@@ -13,29 +18,19 @@ function App() {
   const [currentFile, setCurrentFile] = useState<number>(-1);
   
 
-  //header then split container 1/4 FileStore, 3/4 text editor (adjustable?)
   return (
-    <div className="app-fe">
-    <Header/>
-    
-    
-    <div className='container'>
-      <div className='row'>
-        <div className='col-3'>  
-          <FileStore fileNoteTree={fileNoteTree} setCurrentFile={setCurrentFile}>
+    <BrowserRouter>
+      
+      <Header/>
+      <div className="app-fe">
+      <Routes>
+        <Route path="/" element={<Home/>}></Route>
+        <Route path="/login" element={<LogInPage/>}> </Route>
 
-          </FileStore>
-        </div>
-        <div className='col-9'>
-          <TextEditor currentFile={currentFile} setCurrentFile={setCurrentFile} fileNoteTree={fileNoteTree}>
-
-          </TextEditor>
-        </div>
-
+      </Routes>
       </div>
-    
-    </div>
-    </div>
+
+    </BrowserRouter>
   )
 }
 
