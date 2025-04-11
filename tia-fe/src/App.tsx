@@ -9,14 +9,11 @@ import { BrowserRouter, Route, Routes} from 'react-router-dom'
 
 import Home from './pages/Home'
 import LogInPage from './pages/LogInPage'
+import RegisterPage from './pages/RegisterPage'
 
 
 
 function App() {
-
-  const fileNoteTree = TEST_TREE;
-  const [currentFile, setCurrentFile] = useState<number>(-1);
-  
 
   return (
     <BrowserRouter>
@@ -26,7 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home/>}></Route>
         <Route path="/login" element={<LogInPage/>}> </Route>
-
+        <Route path="/register" element={<RegisterPage/>}></Route> 
       </Routes>
       </div>
 

@@ -3,19 +3,21 @@ import {Link} from 'react-router-dom'
 
 
 
-const LogIn: React.FC = () => {
+
+
+const Register: React.FC = () => {
 
     return(
 
         <div>
-            <h1>LOG IN</h1>
+            <h1>Register</h1>
             Username:
             <input></input>
             Password:
             <input></input>
             <button>SUBMIT</button>
 
-            <Link to ="/register">Don't have an account? Register. </Link>
+            <Link to="/login"> Already have an account? Log in. </Link>
 
         </div>
 
@@ -25,8 +27,6 @@ const LogIn: React.FC = () => {
 
 }
 
-
-
-export default LogIn
+export default Register
 
 
