@@ -3,8 +3,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+//ROUTERS
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var loginRouter = require('./routes/api/login');
+//-------
+
+console.log("in be now");
 
 var app = express();
 
@@ -17,4 +22,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+app.use('/api/login', loginRouter);
+console.log("ok");
+
+app.listen(3001);
 module.exports = app;

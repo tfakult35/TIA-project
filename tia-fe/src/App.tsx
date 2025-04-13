@@ -14,10 +14,9 @@ import RegisterPage from './pages/RegisterPage'
 
 
 function App() {
-
+  console.log("starting");
   return (
     <BrowserRouter>
-      
       <Header/>
       <div className="app-fe">
       <Routes>
