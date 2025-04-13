@@ -1,12 +1,9 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
-require('dotenv').config()
 
-const JWT_SECRET = process.env.JWT_SECRET;
 
 var router = express.Router();
 var {getUser} = require('../../models/users');
-var {comparePassword, hashPassword} = require('../../utils/authHelp.js');
+var {comparePassword, hashPassword, getToken, verifyToken} = require('../../utils/authHelp.js');
 
 
 
@@ -26,9 +23,7 @@ router.post("/", (req, res) => {
                 comparePassword(password, hashedPassword)
                     .then((isValid) => {
                         if (isValid) {
-                            const token = jwt.sign({ user_id: userId},
-                                JWT_SECRET);  //token
-                            console.log("Log in success");
+                            const token = getToken(userId);
                             return res.status(201).json({token});
                         }
                         // invalid password
@@ -46,7 +41,7 @@ router.post("/", (req, res) => {
             // user does not exist
             else {
                 console.log("User does not exist");
-                return res.status(401).end();
+                return res.status(402).end();
             }
         })
         .catch((e) => {

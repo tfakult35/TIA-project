@@ -1,19 +1,30 @@
-import { ReactNode, useState } from "react"
+import { useState } from "react"
 import {Link} from 'react-router-dom'
-import { login, logout } from "../services/authService"
+import { login } from "../services/authService"
+import { useNavigate } from "react-router-dom"
 
+interface LogInProps{
+    isLoggedIn:Boolean,
+    setIsLoggedIn:Function
+}
 
-const LogIn: React.FC = () => {
+const LogIn: React.FC<LogInProps> = ({isLoggedIn,setIsLoggedIn}) => {
+
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleSubmit = () => {
-        login(username,password)
+        login(username,password,setIsLoggedIn)
+            .then(()=>{
+                setIsLoggedIn(true);
+                navigate("/");
+            })
             .catch((error) => {
-                console.log(error.message);
+                console.log(error.message); //add error message ui
             });
-        console.log(localStorage.token);
+        
     }
 
     // controlled/uncontrolled input

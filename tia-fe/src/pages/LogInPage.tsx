@@ -1,15 +1,17 @@
 import LogIn from "../components/LogIn"
 
 
+interface LogInPageProps{
+    isLoggedIn:Boolean,
+    setIsLoggedIn:Function
+}
 
-function LogInPage() {
-
-
+const LogInPage: React.FC<LogInPageProps> = ({isLoggedIn,setIsLoggedIn}) => { 
     return(
 
         <div>
 
-            <LogIn/>
+            <LogIn isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
             
 
         </div>

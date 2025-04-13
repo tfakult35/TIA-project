@@ -1,22 +1,26 @@
-function login(username:string, password: string){
+function login(username:string, password: string, setIsLoggedIn:Function){
 
     return fetch("/api/login", {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",  // Add this line
+            "Content-Type": "application/json",  
         },
         body: JSON.stringify({username, password}) //json stringify
     })
         .then((response) =>{ 
             if(!response.ok) {
                 if (response.status >= 500){
-                    throw Error("500 error login");
-                } else{
-                    throw Error("400 error login");
+                    throw Error("Error logging in.");
+                } else if( response.status === 401)
+                {
+                    throw Error("Incorrect password.")                    
+                }else{
+                    throw Error("User does not exist.")
                 }
             }else{
                 response.json()                 //json from body stream
                     .then(data => {
+                        setIsLoggedIn(true);
                         localStorage.setItem("token",data.token);
                     }); 
             }
@@ -25,8 +29,9 @@ function login(username:string, password: string){
 
 }
 
-function logout(){
-    return("ok")
+function logout(setIsLoggedIn:Function){
+    setIsLoggedIn(false);
+    localStorage.removeItem('token');
 }
 
 export {login, logout};

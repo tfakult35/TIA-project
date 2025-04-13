@@ -1,9 +1,17 @@
+import { logout } from "../services/authService"
+import { Link } from "react-router-dom"
+
+interface HeaderProps{
+    isLoggedIn: Boolean,
+    setIsLoggedIn:Function
+}
 
 
-function Header(){
+//WHY doesnt home rerender when I change isLoggedIn
 
+const Header:React.FC<HeaderProps> = ({isLoggedIn,setIsLoggedIn}) => {
     return (
-
+        <>
         <nav className="navbar navbar-expand-lg">
 
 
@@ -15,17 +23,22 @@ function Header(){
             
             <div className="collapse navbar-collapse" id="navbarNav">
                <ul className="navbar-nav mr-auto">
-                   <li className="nav-item"><a className="nav-link" href="/">Notes</a></li>
-                   <li className="nav-item"><a className="nav-link" href="#about">Groups</a></li>                       
-                   <li className="nav-item"><a className="nav-link" href="#contact">Account</a></li>
-                   <li className="nav-item"><a className="nav-link" href="/login">Log out</a></li>
+                   <li className="nav-item"><Link className="nav-link" to="/">Notes</Link></li>
+                   <li className="nav-item"><Link className="nav-link" to="/">Groups</Link></li>                       
+                   <li className="nav-item"><Link className="nav-link" to="/">Account</Link></li>
+                   {!isLoggedIn && (<li className="nav-item"><Link className="nav-link" to="/login">Log in</Link></li>)}
                 </ul>
+
+
             </div>
 
 
 
 
         </nav>
+
+        {isLoggedIn && (<button onClick= {() =>logout(setIsLoggedIn)}>Log out</button>)}
+        </>
 
 
     )

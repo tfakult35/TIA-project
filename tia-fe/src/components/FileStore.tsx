@@ -15,10 +15,10 @@ const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile}) =>{
     const handleAddFileNote = () => {
         
     }
-
     return (
         <div className="file-store">
-            <button>+</button>
+           
+           <button>+</button>
             <ul>
 
             {[...fileNoteTree].map((fileNote) => (
