@@ -1,5 +1,7 @@
 import { ReactNode, useState } from "react"
 import {Link} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
+import {register} from '../services/authService';
 
 
 
@@ -7,15 +9,32 @@ import {Link} from 'react-router-dom'
 
 const Register: React.FC = () => {
 
+    const navigate = useNavigate();
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = () => {
+        register(username,password)
+            .then(()=>{
+                navigate("/login");
+            })
+            .catch((error) => {
+                console.log(error.message); //add error message ui
+            });
+        
+    }
+
     return(
 
         <div>
             <h1>Register</h1>
             Username:
-            <input></input>
+            <input value={username} onChange={(e) => setUsername(e.target.value)}></input>              
             Password:
-            <input></input>
-            <button>SUBMIT</button>
+            <input value={password} onChange={(e) => setPassword(e.target.value)}></input>
+            <button onClick={handleSubmit}>SUBMIT</button>
+
 
             <Link to="/login"> Already have an account? Log in. </Link>
 

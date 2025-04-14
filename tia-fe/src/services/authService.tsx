@@ -1,3 +1,4 @@
+
 function login(username:string, password: string, setIsLoggedIn:Function){
 
     return fetch("/api/login", {
@@ -34,4 +35,26 @@ function logout(setIsLoggedIn:Function){
     localStorage.removeItem('token');
 }
 
-export {login, logout};
+function register(username:string, password:string){
+    return fetch("/api/login/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",  
+        },
+        body: JSON.stringify({username, password}) //json stringify
+    })
+        .then((response)=>{
+            if(!response.ok){
+                if (response.status < 500){
+                    throw Error("Username is already taken.")
+                } else {
+                    throw Error("Database error.")
+                }
+            }
+        }
+
+        )
+}
+
+
+export {login, logout, register};

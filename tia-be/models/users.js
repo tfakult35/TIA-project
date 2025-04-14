@@ -8,10 +8,11 @@ exports.getUser = function(username){
     );
 }
 
-exports.addUser = function(username,password){
+exports.addUser = function(username,password,user_desc){
 
     return pool.query(
-
+        "insert into users (username,password,user_desc) values ($1,$2,$3)",
+        [username,password,user_desc]
     )
 
 }

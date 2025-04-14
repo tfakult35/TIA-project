@@ -1,8 +1,8 @@
 CREATE TABLE "public"."users" (
     "user_id" SERIAL PRIMARY KEY,
-    "username" varchar(100) NOT NULL,
+    "username" varchar(100) NOT NULL UNIQUE,
     "password" varchar(100) NOT NULL,
-    "user_desc" varchar(1000) NOT NULL
+    "user_desc" text NOT NULL
 );
 
 CREATE TABLE "public"."friendships" (
@@ -24,8 +24,8 @@ CREATE TABLE "public"."files" (
     "file_name" varchar(100) NOT NULL,
     "created_time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     "modified_time" TIMESTAMP NOT NULL,
-    "topic" varchar(1000) NOT NULL,
-    "content" TEXT 
+    "topic" text NOT NULL,
+    "content" text NOT NULL
 );
 
 CREATE TABLE "public"."access_values" (
@@ -43,3 +43,19 @@ CREATE TABLE "public"."file_hierarchy" (
     FOREIGN KEY ("file_id2") REFERENCES "public"."files"("file_id") ON DELETE CASCADE  
     
 );
+
+CREATE TABLE "public"."user_files" (
+    "user_id" INT NOT NULL,
+    "file_id" INT NOT NULL,
+    PRIMARY KEY ("user_id", "file_id"),
+    FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE CASCADE,
+    FOREIGN KEY ("file_id") REFERENCES "public"."files"("file_id") ON DELETE CASCADE  
+)
+
+CREATE TABLE "public"."group_files" (
+    "group_id" INT NOT NULL,
+    "file_id" INT NOT NULL,
+    PRIMARY KEY ("group_id", "file_id"),
+    FOREIGN KEY ("group_id") REFERENCES "public"."group"("group_id") ON DELETE CASCADE,
+    FOREIGN KEY ("file_id") REFERENCES "public"."files"("file_id") ON DELETE CASCADE  
+)

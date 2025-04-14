@@ -2,7 +2,7 @@ const express = require('express');
 
 
 var router = express.Router();
-var {getUser} = require('../../models/users');
+var {getUser, addUser} = require('../../models/users');
 var {comparePassword, hashPassword, getToken, verifyToken} = require('../../utils/authHelp.js');
 
 
@@ -50,5 +50,24 @@ router.post("/", (req, res) => {
         })
 });
 
+router.post("/register", (req,res) =>{
+    console.log("in register api");
+    const {username,password} = req.body; 
+    hashPassword(password).then((hpassword)=>{
+    addUser(username,hpassword,"")
+        .then( () =>{return res.status(200).end();})
+        .catch((error)=>{
+
+            if(error.code === '23505'){
+                return res.status(400).end();
+            }else{
+                return res.status(500).end();
+            }
+        })
+    }).catch(
+        () => {return res.status(500).end();}
+
+    )
+})
 
 module.exports = router;
