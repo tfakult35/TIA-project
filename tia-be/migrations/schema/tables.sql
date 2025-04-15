@@ -10,7 +10,8 @@ CREATE TABLE "public"."friendships" (
     "user_id2" INT NOT NULL,
     PRIMARY KEY ("user_id1", "user_id2"),
     FOREIGN KEY ("user_id1") REFERENCES "public"."users"("user_id") ON DELETE CASCADE, 
-    FOREIGN KEY ("user_id2") REFERENCES "public"."users"("user_id") ON DELETE CASCADE   
+    FOREIGN KEY ("user_id2") REFERENCES "public"."users"("user_id") ON DELETE CASCADE,
+    CHECK ("user_id1" < "user_id2")   
 );
 
 CREATE TABLE "public"."groups" (
@@ -56,6 +57,6 @@ CREATE TABLE "public"."group_files" (
     "group_id" INT NOT NULL,
     "file_id" INT NOT NULL,
     PRIMARY KEY ("group_id", "file_id"),
-    FOREIGN KEY ("group_id") REFERENCES "public"."group"("group_id") ON DELETE CASCADE,
+    FOREIGN KEY ("group_id") REFERENCES "public"."groups"("group_id") ON DELETE CASCADE,
     FOREIGN KEY ("file_id") REFERENCES "public"."files"("file_id") ON DELETE CASCADE  
 )

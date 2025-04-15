@@ -1,5 +1,5 @@
 import FileNoteTree from "../classtypes/FileNoteTree"; 
-import FileNoteType from "../classtypes/FileNoteType";
+import FileNoteType from "../classtypes/FileNoteHeaderType";
 
 const e0 = new FileNoteType(0,"hello0","hellohello0","content0", 0,new Date(),new Date(),"topic0");
 const e1 = new FileNoteType(1,"hello1","hellohello1","content1", 0, new Date(),new Date(),"topic0");

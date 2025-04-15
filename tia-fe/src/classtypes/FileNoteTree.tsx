@@ -1,4 +1,4 @@
-import FileNoteType from "./FileNoteType";
+import FileNoteType from "./FileNoteHeaderType";
 
 class FileNoteTree{
     

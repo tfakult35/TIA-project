@@ -1,4 +1,4 @@
-import FileNoteType from "../classtypes/FileNoteType"
+import FileNoteType from "../classtypes/FileNoteHeaderType"
 import { ReactNode, SetStateAction, useState } from "react"
 import FileNoteTree from "../classtypes/FileNoteTree";
 

@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/api/login');
+var fileRouter  = require('./routers/api/files');
 //-------
 
 console.log("in be now");
@@ -24,6 +25,8 @@ app.use('/users', usersRouter);
 
 app.use('/api/login', loginRouter);
 console.log("ok");
+
+app.use('/api/files', fileRouter);
 
 app.listen(3001);
 module.exports = app;
