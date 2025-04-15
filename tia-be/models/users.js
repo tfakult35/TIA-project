@@ -27,5 +27,8 @@ exports.checkFriendship = function(user_id1, user_id2){
 }
 
 exports.getUserGroups = function(user_id){
-    
+    return pool.query(
+        'SELECT * FROM group_members gm WHERE gm.user_id = $1',
+        [user_id]
+    )
 }

@@ -60,3 +60,12 @@ CREATE TABLE "public"."group_files" (
     FOREIGN KEY ("group_id") REFERENCES "public"."groups"("group_id") ON DELETE CASCADE,
     FOREIGN KEY ("file_id") REFERENCES "public"."files"("file_id") ON DELETE CASCADE  
 )
+
+CREATE TABLE "public"."group_members"(
+    "group_id" INT NOT NULL,
+    "user_id" INT NOT NULL,
+    PRIMARY KEY ("group_id", "user_id"),
+    FOREIGN KEY ("group_id") REFERENCES "public"."groups"("group_id") ON DELETE CASCADE,
+    FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE CASCADE  
+
+)
