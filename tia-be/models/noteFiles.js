@@ -20,3 +20,16 @@ exports.getFileOwner = function(file_id){
     )
 }
 
+
+// ONE FILE HAS ONLY ONE GROUP
+exports.getFileContent = function(file_id, privl, groups){
+    return pool.query(
+        `SELECT f.content
+        FROM files f
+        JOIN access_values av ON f.file_id = av.file_id
+        LEFT JOIN group_files gf ON f.file_id = gf.file_id
+        WHERE f.file_id = $1 AND ((av.access_value <= $2)
+        OR (av.access_value = 2 AND gf.group_id = ANY($3)))`,
+        [file_id,privl,groups]
+    )
+}

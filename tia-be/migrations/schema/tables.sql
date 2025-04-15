@@ -55,7 +55,7 @@ CREATE TABLE "public"."user_files" (
 
 CREATE TABLE "public"."group_files" (
     "group_id" INT NOT NULL,
-    "file_id" INT NOT NULL,
+    "file_id" INT NOT NULL UNIQUE, --delete this comment after updating db definition 
     PRIMARY KEY ("group_id", "file_id"),
     FOREIGN KEY ("group_id") REFERENCES "public"."groups"("group_id") ON DELETE CASCADE,
     FOREIGN KEY ("file_id") REFERENCES "public"."files"("file_id") ON DELETE CASCADE  
