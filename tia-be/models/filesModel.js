@@ -1,9 +1,9 @@
 var pool = require('../config/db.js')
 
 //returns users (user_id) files with appr privl level, and their parent file
-exports.getUserFiles = function(user_id, privl){
+exports.getUserFileHeaders = function(user_id, privl){
     return pool.query(
-        `SELECT f.file_id, f.file_name, f.created_time, f.modified_time, f.topic, fh.file_id1 as parent_id 
+        `SELECT f.file_id, f.file_name, av.access_value, f.created_time, f.modified_time, f.topic, fh.file_id1 as parent_id 
         FROM files f 
         JOIN user_files uf ON f.file_id = uf.file_id
         JOIN access_values av ON f.file_id = av.file_id

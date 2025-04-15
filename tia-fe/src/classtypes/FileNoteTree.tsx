@@ -1,11 +1,12 @@
-import FileNoteType from "./FileNoteHeaderType";
+import FileNoteHeaderType from "./FileNoteHeaderType";
 
 class FileNoteTree{
     
     private rootIds:Set<Number> = new Set<Number>();
 
     //gets taken from database
-    constructor(private hierarchyMap:Map<Number,Number[]>,private idMap:Map<Number, FileNoteType>){
+    constructor(private hierarchyMap:Map<Number,Number[]>,private idMap:Map<Number, FileNoteHeaderType>){
+
         if(this.hierarchyMap.size != this.idMap.size){
             throw Error("ERROR!: keys don't match.");
         }
@@ -35,52 +36,25 @@ class FileNoteTree{
         }
     };
 
-    //need change database next functions
-    public addFileNote(fileNote:FileNoteType, ancestor:Number):void{
-        if(ancestor !== -1 && !this.hierarchyMap.has(ancestor)){
+
+    
+    public createFileNote(ancestor:Number):void{                        //topic/content start blank, access value 5
+                                                                        //NEED to change db: files, user_files (curr token id), access_values (=5)
+        if(ancestor !== null && !this.hierarchyMap.has(ancestor)){
             throw Error("ERROR! addFileNote: Ancestor does not exist.")
         }
     
-        this.idMap.set(fileNote.id,fileNote);
-        this.hierarchyMap.set(fileNote.id, []);
+    }
+    
+    public removeFileNote(id:Number):void{                      //DB need to delete ONLY one file from files, cascades down to its children in each table
        
-        if(ancestor===-1){
-            this.rootIds.add(fileNote.id);
-
-            return;
-        }
-    
-        this.hierarchyMap.get(ancestor)!.push(fileNote.id);
-        this.rootIds.delete(fileNote.id);
-    }
-    
-    public removeFileNote(id:Number):void{
-        const fchildren = this.hierarchyMap.get(id);
-        if(fchildren){
-            for(const c_id of fchildren){
-                this.removeFileNote(c_id);
-            }
-        }
-
-        this.idMap.delete(id);
-        this.hierarchyMap.delete(id);
-        this.rootIds.delete(id);
     }
 
-    public getFileNote(id:Number):FileNoteType{
+    public getFileNote(id:Number):FileNoteHeaderType{
         if(!this.idMap.has(id)){
             throw Error("ERROR! getFileNote: key does not exist.")
         }
         return this.idMap.get(id)!;
-    }
-
-    //change filenote without changing the hierarchy
-    public setFileNote(fileNote:FileNoteType):void{
-        const key = fileNote.id;
-        if(!this.hierarchyMap.has(key)){
-            throw Error("ERROR! setFileNote: key does not exist.")
-        }
-        this.idMap.set(key, fileNote);
     }
 
     public getChildrenId(id:Number):Number[]{
@@ -90,19 +64,19 @@ class FileNoteTree{
         return this.hierarchyMap.get(id) ?? [];
     }
 
-    public getChildrenFN(id:Number):FileNoteType[]{
+    public getChildrenFN(id:Number):FileNoteHeaderType[]{
         if(!this.hierarchyMap.has(id)){
             throw Error("ERROR! getChildrenFN: key does not exist.")
         }
         return this.hierarchyMap.get(id)!.map((id) => (this.getFileNote(id)));
     }
 
-    [Symbol.iterator](): Iterator<FileNoteType> {
+    [Symbol.iterator](): Iterator<FileNoteHeaderType> {
         const rootIdsIterator = this.rootIds.values();
         const idMap = this.idMap;
     
         return {
-            next(): IteratorResult<FileNoteType> {
+            next(): IteratorResult<FileNoteHeaderType> {
                 const nextID = rootIdsIterator.next();
                 if (nextID.done) {
                     return { done: true, value: undefined };
@@ -113,12 +87,7 @@ class FileNoteTree{
         };
     }
 
-    public setContent(id:number, content:string):void {
-        const fileNote = this.idMap.get(id);
-        if(fileNote === undefined) throw Error("Setcontent");
-        fileNote.content = content;
-        this.idMap.set(id,fileNote);
-    }
+   
 
 }
 

@@ -7,7 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/api/login');
-var fileRouter  = require('./routers/api/files');
+var fileRouter  = require('./routes/api/files');
 //-------
 
 console.log("in be now");

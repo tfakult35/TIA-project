@@ -7,7 +7,7 @@ interface FileNoteProps {
 
     fileNote:FileNoteType;
     fileNoteTree:FileNoteTree;
-    setCurrentFile:React.Dispatch<SetStateAction<number>>;
+    setCurrentFile:Function;
 }
 
 
@@ -23,26 +23,26 @@ const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree,setCurrentFile
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    const handleNameClick = () => {setCurrentFile(fileNote.id)};
+    const handleNameClick = () => {setCurrentFile(fileNote.file_id)};
     const handleExpand = () => {setIsOpen(!isOpen)};
     const handleRightClick = () => {}
     
 
-    const hasChildren = fileNoteTree.getChildrenFN(fileNote.id).length > 0;
+    const hasChildren = fileNoteTree.getChildrenFN(fileNote.file_id).length > 0;
 
 
     return(
 
     <div className="file-note">
       <div className="file-note-header">
-        <div className="file-note-name" onClick={handleNameClick} >{fileNote.name}</div>
+        <div className="file-note-name" onClick={handleNameClick} >{fileNote.file_name}</div>
         <div className="file-note-button" onClick={handleExpand}> {hasChildren ? (isOpen ? "/" : "|"):""} </div>
       </div>
 
-      {fileNoteTree.getChildrenFN(fileNote.id).length > 0 && isOpen && (
+      {fileNoteTree.getChildrenFN(fileNote.file_id).length > 0 && isOpen && (
         <ul>
-          {fileNoteTree.getChildrenFN(fileNote.id).map((childNote) => (
-            <li key={childNote.id}>
+          {fileNoteTree.getChildrenFN(fileNote.file_id).map((childNote) => (
+            <li key={childNote.file_id}>
               <FileNote fileNote={childNote} fileNoteTree={fileNoteTree} setCurrentFile={setCurrentFile}/>
             </li>
           ))}

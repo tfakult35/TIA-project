@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 //
-const {checkFriendship} = require('../../models/users')
+const {checkFriendship} = require('../models/users')
 
 //token auth
 const jwt = require('jsonwebtoken');
@@ -24,10 +24,9 @@ const getToken = (user_id) => {
                     JWT_SECRET);
 };
 
-// valid token/invalid token + no token
+// valid token/invalid token + no token, middleware
 function determineLogInJWT(req,res,next){
     const token = req.headers["authorization"]; //header only includes token
-
     if(!token){
         req.user = undefined;
     }else{
@@ -44,6 +43,9 @@ function determineLogInJWT(req,res,next){
 }
 
 async function getRelativePrivilege(token_id,target_id){
+    console.log(token_id);
+    console.log("IN GET RELATIVE PRIVL")
+    
     if(!token_id){
         return 0;
     }

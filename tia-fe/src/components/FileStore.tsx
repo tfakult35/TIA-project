@@ -5,7 +5,7 @@ import { SetStateAction } from 'react';
 
 interface FileStoreProp {
     fileNoteTree:FileNoteTree;
-    setCurrentFile:React.Dispatch<SetStateAction<number>>;
+    setCurrentFile:Function;
 }
 
 const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile}) =>{
@@ -22,7 +22,7 @@ const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile}) =>{
             <ul>
 
             {[...fileNoteTree].map((fileNote) => (
-                <li key={fileNote.id}>
+                <li key={fileNote.file_id}>
                     <FileNote fileNote={fileNote} fileNoteTree={fileNoteTree} 
                     setCurrentFile={setCurrentFile}/>
                 </li>

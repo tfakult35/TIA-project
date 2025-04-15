@@ -20,6 +20,8 @@ exports.addUser = function(username,password,user_desc){
 //looks up friendship
 exports.checkFriendship = function(user_id1, user_id2){
     const [u1, u2] = user_id1 < user_id2 ? [user_id1, user_id2] : [user_id2, user_id1];
+    console.log("CHECKFREINDSHIT:", user_id1);
+    console.log("CHECKFREINDSHIT:", user_id2);
     return pool.query(
         "select * from friendships where user_id1 = $1 AND user_id2 = $2",
         [u1,u2]

@@ -1,7 +1,8 @@
 import FileStore from '../components/FileStore'
-import TEST_TREE from '../dummy_data/dummy_data'
 import TextEditor from '../components/TextEditor'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { buildFileNoteTree } from '../services/fileService';
+import FileNoteTree from '../classtypes/FileNoteTree';
 
 interface HomeProps{
   isLoggedIn:Boolean;
@@ -9,9 +10,22 @@ interface HomeProps{
 
 
 const Home: React.FC<HomeProps> = ({isLoggedIn}) => { 
+    
 
-    const fileNoteTree = TEST_TREE;
-    const [currentFile, setCurrentFile] = useState<number>(-1);
+
+    const [fileNoteTree, setFileNoteTree] = useState<FileNoteTree>(new FileNoteTree(new Map(),new Map()));
+    const [currentFile, setCurrentFile] = useState<number|null>(null);
+
+    //runs on initial render
+    useEffect(() => {
+      buildFileNoteTree(null,"")
+        .then((fnt) =>{
+          setFileNoteTree(fnt);
+          return;
+        })
+        .catch((e)=> console.log(e))
+
+    },[])
 
     //need to rerender this:
     return(

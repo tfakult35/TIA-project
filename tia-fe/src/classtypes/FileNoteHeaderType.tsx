@@ -1,11 +1,11 @@
-class FileNoteHeaderType {
-
-
-    constructor(public id:number, public name:string, public description:string, 
-                public created_time:Date, public last_changed_time:Date,
-                public topic:string){}
-}
-
-
+type FileNoteHeaderType = {
+    file_id: number;
+    file_name: string;
+    access_value: number;
+    created_time: string;
+    modified_time: string;
+    topic: string;
+    parent_id: number | null;
+  };
 
 export default FileNoteHeaderType
