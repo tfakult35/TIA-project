@@ -14,7 +14,7 @@ const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile,trigger
 
 
     const handleAddFileNote = async () => {          
-        await fileNoteTree.addNewFileNote("NewFile",null); ///TODO: add enter file name popup
+        await fileNoteTree.addNewFileNote("NewFile",null); ///TODO: add enter file name popup?
         setTriggerRender((v:number) => !v);
     }
 
