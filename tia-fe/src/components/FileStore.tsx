@@ -13,8 +13,8 @@ interface FileStoreProp {
 const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile,triggerRender,setTriggerRender}) =>{
 
 
-    const handleAddFileNote = () => {
-        fileNoteTree.addNewFileNote("NewFile",null); ///TODO: add enter file name popup
+    const handleAddFileNote = async () => {          
+        await fileNoteTree.addNewFileNote("NewFile",null); ///TODO: add enter file name popup
         setTriggerRender((v:number) => !v);
     }
 
