@@ -1,4 +1,5 @@
 import FileNoteHeaderType from "./FileNoteHeaderType";
+import { createFileNote } from "../services/fileService";
 
 class FileNoteTree{
     
@@ -37,13 +38,32 @@ class FileNoteTree{
     };
 
 
-    
-    public createFileNote(ancestor:Number):void{                        //topic/content start blank, access value 5
-                                                                        //NEED to change db: files, user_files (curr token id), access_values (=5)
-        if(ancestor !== null && !this.hierarchyMap.has(ancestor)){
-            throw Error("ERROR! addFileNote: Ancestor does not exist.")
+    // ----------- FUNCTIONS -----------
+    public async addNewFileNote(file_name: string, parent_file_id:number|null){ 
+        try{
+            const result = await createFileNote(file_name,parent_file_id);
+            const fileNoteHeader: FileNoteHeaderType = {
+                file_id: result.file_id,
+                file_name: file_name,
+                access_value: 5,
+                created_time: result.modified_time,
+                modified_time: result.modified_time,
+                topic: "",
+                parent_id: parent_file_id,
+              };
+            this.idMap.set(result.file_id, fileNoteHeader);
+            this.hierarchyMap.set(result.file_id, []);
+            if(parent_file_id !== null){
+                this.hierarchyMap.get(parent_file_id)!.push(result.file_id);
+            }else{
+                this.rootIds.add(result.file_id);
+            }
+
+            return;
+
+        }catch (e){ // fix this
+            throw e;
         }
-    
     }
     
     public removeFileNote(id:Number):void{                      //DB need to delete ONLY one file from files, cascades down to its children in each table

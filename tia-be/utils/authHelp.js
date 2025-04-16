@@ -24,7 +24,7 @@ const getToken = (user_id) => {
                     JWT_SECRET);
 };
 
-// valid token/invalid token + no token, middleware
+// valid token/invalid token + no token, middleware RETURN UNDEFINED
 function determineLogInJWT(req,res,next){
     const token = req.headers["authorization"]; //header only includes token
     if(!token){

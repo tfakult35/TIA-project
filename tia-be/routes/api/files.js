@@ -3,14 +3,41 @@ const express = require('express');
 var router = express.Router();
 
 
-var {getUserFileHeaders,getFileOwner, getFileContent} = require('../../models/filesModel');
+var {getUserFileHeaders,getFileOwner, getFileContent, createNewFile} = require('../../models/filesModel');
 var {determineLogInJWT,getRelativePrivilege} = require('../../utils/authHelp');
 const { getUserGroups } = require('../../models/users');
 
 
+//----- CREATE NEW BLANK FILE WITH file_name AND a_v = 5 OWNED BY USER -----
+router.post("/user/", determineLogInJWT, async(req,res)=>{
+    const token_id = req.user;
+    if(!token_id){
+        return res.status(401).send("You are not logged in");
+    }else{
+        //check if parent_file_id are viable
+        const {file_name, parent_file_id} = req.body;
+        try{
+            if(parent_file_id !== null){
+                const parentTest = await getFileOwner(parent_file_id);
+                if(parentTest.rows[0].user_id !== token_id){
+                    return res.status(403).send("The parent file provided is not your file")
+                }
+            }
 
-//need to make a group file get as well
+            const createNewFileResult = await createNewFile(token_id, file_name, parent_file_id);
+            return res.status(200).json(createNewFileResult); //SENDING THE MODIFIED_TIME AND FILE_ID BACK
 
+        }
+        catch (e){
+            console.log(e);
+            res.status(500).send(e); 
+        }
+    }
+
+})
+
+
+//------ GET OWN FILE HEADERS ------
 router.get("/user/own", determineLogInJWT, async(req,res) => {
     const token_id = req.user;
     if(!token_id){
@@ -28,7 +55,7 @@ router.get("/user/own", determineLogInJWT, async(req,res) => {
     }
 })
 
-//CHECK for notes with inaccessabile parents - should not happen as a child can not have a smaller access value than parent
+//------ GET user-id FILE HEADERS; access control ------
 router.get("/user/:user_id", determineLogInJWT, async (req,res)=>{
     const target_id = parseInt(req.params.user_id);
     const token_id = req.user;
@@ -46,7 +73,8 @@ router.get("/user/:user_id", determineLogInJWT, async (req,res)=>{
 );
 
 
-//get content of file, have to check if initiator has the right privl
+
+//------ GET THE CONTENT OF file_id; access control ------
 router.get("/:file_id/content", determineLogInJWT, async (req, res) =>{
     const target_file_id = parseInt(req.params.file_id);
     const token_id = req.user;                                 
@@ -70,7 +98,7 @@ router.get("/:file_id/content", determineLogInJWT, async (req, res) =>{
             
             if(getContentResult.rowCount === 0){
                 console.log("Privl fault");
-                res.status(400).send("Privl fault");
+                res.status(403).send("Privl fault");
             }else{
                 const content = getContentResult.rows[0].content;
                 res.status(200).json(content);

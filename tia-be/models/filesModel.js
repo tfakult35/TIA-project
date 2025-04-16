@@ -1,6 +1,7 @@
 var pool = require('../config/db.js')
 
-//returns users (user_id) files with appr privl level, and their parent file
+//------ RETURNS ALL user_id'S FILLES WITH APPROPRIATE AV (privl), AND THEIR PARENT FILES | null ------
+//------> DOESNT RETURN FILES WITH GROUP_ACCESS HERE UNLESS privl=5
 exports.getUserFileHeaders = function(user_id, privl){
     return pool.query(
         `SELECT f.file_id, f.file_name, av.access_value, f.created_time, f.modified_time, f.topic, fh.file_id1 as parent_id 
@@ -13,6 +14,7 @@ exports.getUserFileHeaders = function(user_id, privl){
     )  
 }
 
+//------ GET OWNER OF file_id ------
 exports.getFileOwner = function(file_id){
     return pool.query(
         'SELECT uf.user_id FROM user_files uf WHERE uf.file_id = $1',
@@ -21,7 +23,7 @@ exports.getFileOwner = function(file_id){
 }
 
 
-// ONE FILE HAS ONLY ONE GROUP
+//------ GET CONTENT OF file_id, APPR privl, ALSO CHECKS GROUPS ------
 exports.getFileContent = function(file_id, privl, groups){
     return pool.query(
         `SELECT f.content
@@ -32,4 +34,55 @@ exports.getFileContent = function(file_id, privl, groups){
         OR (av.access_value = 2 AND gf.group_id = ANY($3)))`,
         [file_id,privl,groups]
     )
+}
+
+
+//------ CREATE NEW FILE BY user_id ------
+//------> BY TRANSACTION: CONTENT ="", TOPIC ="", ACCESS VALUE = 5, NAME = file_name, MOD_TIME = current time, PARENT FILE = parent_id(can be null)
+
+exports.createNewFile = async function(user_id,file_name, parent_file_id){
+    const client = await pool.connect();
+    try{
+        client.query('BEGIN');
+
+        const insertFileResult = await client.query(
+            `INSERT INTO files (file_name, modified_time, topic, content)
+            VALUES ($1, NOW(),'','')
+            RETURNING file_id, modified_time`,
+            [file_name]
+        )
+
+        const file_id = insertFileResult.rows[0].file_id;
+
+        await client.query(
+            `INSERT INTO user_files (user_id, file_id)
+            VALUES ($1, $2)`,
+            [user_id,file_id]
+        )
+
+        await client.query(
+            `INSERT INTO access_values (file_id, access_value)
+            VALUES ($1,5)`,
+            [file_id]
+        )
+
+        if(parent_file_id !== null){
+            await client.query(
+                `INSERT INTO file_hierarchy (file_id1,file_id2)
+                VALUES ($1,$2)`,
+                [parent_file_id,file_id]
+            )
+        }
+
+        await client.query('COMMIT');
+        return insertFileResult.rows[0];
+
+
+    }catch(e){
+        await client.query('ROLLBACK');
+        throw e;
+    }finally{
+        client.release();
+    }
+
 }

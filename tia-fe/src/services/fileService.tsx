@@ -5,7 +5,6 @@ import FileNoteTree from "../classtypes/FileNoteTree";
 // null - own user files,
 // TODO: for the services I should just throw errors and catch them wherever I call them for consistency
 async function buildFileNoteTree(id:(number|null), from:string): Promise<FileNoteTree>{ //either from group or from user, then take the list of fileheaders, apply them
-     // to the filenoteheader type, make hierarchy map, idmap and root files set
     
     try{
         var response;
@@ -69,6 +68,8 @@ async function buildFileNoteTree(id:(number|null), from:string): Promise<FileNot
         return new FileNoteTree(new Map(),new Map());
     }
 }
+
+
 async function getFileContent(file_id: number): Promise<string> {
     const response = await fetch(`/api/files/${file_id}/content`, {
         method: "GET",
@@ -90,4 +91,26 @@ async function getFileContent(file_id: number): Promise<string> {
     return content;
 }
 
-export{buildFileNoteTree, getFileContent};
+async function createFileNote(file_name:string, parent_file_id:number|null){
+    const response = await fetch(`/api/files/user`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem("token") || ""
+        },
+        body: JSON.stringify({file_name,parent_file_id})
+    });
+
+    if(!response.ok){ //FINISH THIS
+        if (response.status >= 500) {
+            throw new Error("API error");
+        } else {
+            throw new Error("ERROR createFIleNote");
+        }
+    }
+    
+    const result = await response.json();
+    return result;
+}
+
+export{buildFileNoteTree, getFileContent, createFileNote};
