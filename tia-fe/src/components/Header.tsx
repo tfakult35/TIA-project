@@ -15,7 +15,7 @@ const Header:React.FC<HeaderProps> = ({isLoggedIn,setIsLoggedIn}) => {
         <nav className="navbar navbar-expand-lg">
 
 
-            <a className="navbar-brand" href="#">NotesHare</a>
+            <Link className="navbar-brand" to="/">NotesHare</Link>
 
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                    <span className="navbar-toggler-icon"></span>

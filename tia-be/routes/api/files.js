@@ -41,12 +41,12 @@ router.post("/user/", determineLogInJWT, async(req,res)=>{
 router.get("/user/own", determineLogInJWT, async(req,res) => {
     const token_id = req.user;
     if(!token_id){
+        console.log("NOT LOGGED IN");
         return res.status(401).send("You are not logged in");
     }
     else{
         try{
             const userFileResult = await getUserFileHeaders(token_id,5);
-            console.log(userFileResult.rows);
             return res.status(200).json(userFileResult.rows)
         }catch (e){
             console.log(e);

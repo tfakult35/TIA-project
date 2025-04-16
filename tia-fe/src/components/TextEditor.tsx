@@ -1,17 +1,17 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { RefObject, useEffect } from "react";
+import { useEffect } from "react";
 import FileNoteTree from "../classtypes/FileNoteTree";
 import { getFileContent } from "../services/fileService";
 
 interface TextEditorProps {
   currentFile: number|null;
   setCurrentFile: Function;
-  fileNoteTreeRef: RefObject<FileNoteTree>;
+  fileNoteTree: FileNoteTree;
 }
 
 
-const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fileNoteTreeRef }) => {
+const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fileNoteTree }) => {
   const editor = useEditor({
     extensions: [StarterKit],
     content: "",
@@ -50,7 +50,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fi
     <>
       {currentFile !== null && editor && (
         <div>
-          {fileNoteTreeRef.current.getFileNote(currentFile).file_name}
+          {fileNoteTree.getFileNote(currentFile).file_name}
           <button onClick={handleSave}>SAVE</button> <button onClick={handleQuit}>X</button>
           <EditorContent editor={editor} className="tiptap-editor" />
         </div>

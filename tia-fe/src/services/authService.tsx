@@ -19,7 +19,7 @@ function login(username:string, password: string, setIsLoggedIn:Function){
                     throw Error("User does not exist.")
                 }
             }else{
-                response.json()                 //json from body stream
+                return response.json()                 //json from body stream
                     .then(data => {
                         setIsLoggedIn(true);
                         localStorage.setItem("token",data.token);

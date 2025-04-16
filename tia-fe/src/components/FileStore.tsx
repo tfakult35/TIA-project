@@ -1,32 +1,34 @@
 import FileNote from './FileNote'
 import FileNoteTree from '../classtypes/FileNoteTree'
-import { RefObject} from 'react';
 //import "../App.css"
 
 interface FileStoreProp {
-    fileNoteTreeRef:RefObject<FileNoteTree>;
+    fileNoteTree:FileNoteTree;
     setCurrentFile:Function;
-    setFileNoteTreeVersion:Function;
-    fileNoteTreeVersion:number;
+    triggerRender:boolean;
+    setTriggerRender:Function;
+   
 }
 
-const FileStore: React.FC<FileStoreProp> = ({fileNoteTreeRef,setCurrentFile,setFileNoteTreeVersion,fileNoteTreeVersion}) =>{
+const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile,triggerRender,setTriggerRender}) =>{
 
 
     const handleAddFileNote = () => {
-        fileNoteTreeRef.current.addNewFileNote("NewFile",null); ///TODO: add enter file name popup
-        setFileNoteTreeVersion((v:number) => v+1);
+        fileNoteTree.addNewFileNote("NewFile",null); ///TODO: add enter file name popup
+        setTriggerRender((v:number) => !v);
     }
 
+    console.log("FILESTORE");
+    console.log(fileNoteTree);
     return (
         <div className="file-store">
            
            <button onClick={handleAddFileNote}>+</button>
             <ul>
 
-            {[...fileNoteTreeRef.current].map((fileNote) => (           //ITERATES THROUGH THE ROOT FILES
+            {[...fileNoteTree].map((fileNote) => (           //ITERATES THROUGH THE ROOT FILES
                 <li key={fileNote.file_id}>
-                    <FileNote fileNote={fileNote} fileNoteTree={fileNoteTreeRef.current} 
+                    <FileNote fileNote={fileNote} fileNoteTree={fileNoteTree} 
                     setCurrentFile={setCurrentFile}/>
                 </li>
             ))}

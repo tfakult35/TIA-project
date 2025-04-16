@@ -26,6 +26,7 @@ const getToken = (user_id) => {
 
 // valid token/invalid token + no token, middleware RETURN UNDEFINED
 function determineLogInJWT(req,res,next){
+    console.log(req.headers);
     const token = req.headers["authorization"]; //header only includes token
     if(!token){
         req.user = undefined;

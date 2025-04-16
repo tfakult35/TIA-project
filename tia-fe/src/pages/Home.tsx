@@ -1,8 +1,7 @@
-import FileStore from '../components/FileStore'
-import TextEditor from '../components/TextEditor'
-import { useEffect, useState,useRef } from 'react';
+import { useEffect, useState, useRef} from 'react';
 import { buildFileNoteTree } from '../services/fileService';
 import FileNoteTree from '../classtypes/FileNoteTree';
+import EditorAndStoreWrapper from '../components/EditorAndStoreWrapper';
 
 interface HomeProps{
   isLoggedIn:Boolean;
@@ -12,52 +11,41 @@ interface HomeProps{
 const Home: React.FC<HomeProps> = ({isLoggedIn}) => { 
     
 
-    const [fileNoteTreeVersion, setFileNoteTreeVersion] = useState<number>(0); //simple state to trigger rerenders without having to rerender fileNoteTree
-    //maybe put it int the FileStore instead?
     
-    const fileNoteTreeRef = useRef<FileNoteTree>(
-      new FileNoteTree(new Map(), new Map())    //TODO: USEREF HERE MAKES NO SENSE, IF IT GETS REWRITTEN EVERY USEFFECT?
-    );                                          //TODO: FILES DONT SHOW UP AFTER LOGGING IN ONLY AFTER RELOADING SOMETIMES?
-    
-    const [currentFile, setCurrentFile] = useState<number|null>(null);
+    var fileNoteTree = useRef<FileNoteTree>(new FileNoteTree(new Map(),new Map()));
 
+
+    const [ready,setReady] = useState<boolean>(false);
+
+    //FILES DONT LOAD !!!!!!!!!
     //TODO: ERROR WHEN NOT LOGGED IN
-    //TODO: FNT GETS REBUILT EACH RERENDER SO EACH TIME FILENOTETREEVERSION CHANGES?
+    //TODO: DOESNT UPDATE AFTER FIRST ADD FILE
+    //TODO: 
     useEffect(() => {
       buildFileNoteTree(null,"")
         .then((fnt) =>{
-          fileNoteTreeRef.current = fnt;
-          setFileNoteTreeVersion((v:number)=> v+1);
+          console.log("built!");
+          fileNoteTree.current = fnt;
+          setReady((v:boolean)=>true);
           return;
         })
-        .catch((e)=> console.log(e))
+        .catch((e)=> {console.log(e); setReady(true);})
 
     },[])
 
-    return(
 
-    <>
-    {isLoggedIn && (<div className='container'>
-      <div className='row'>
-        <div className='col-3'>  
-          <FileStore fileNoteTreeRef={fileNoteTreeRef} setCurrentFile={setCurrentFile} fileNoteTreeVersion={fileNoteTreeVersion}
-          setFileNoteTreeVersion={setFileNoteTreeVersion}>
+    if (!ready) {
+      return <div>Loading your files</div>;
+    }else{
+      return(
 
-          </FileStore>
-        </div>
-        <div className='col-9'>
-          <TextEditor currentFile={currentFile} setCurrentFile={setCurrentFile} fileNoteTreeRef={fileNoteTreeRef}>
+      <>
+      {isLoggedIn && (<EditorAndStoreWrapper isLoggedIn={isLoggedIn} fileNoteTree={fileNoteTree.current}/>)}
 
-          </TextEditor>
-        </div>
-
-      </div>
-    
-    </div>)}
-
-    {!isLoggedIn && (<> LOG IN to see your files</>)}
-    </>
-  )
+      {!isLoggedIn && (<> LOG IN to see your files</>)}
+      </>
+    )
+    }
   
 }
 
