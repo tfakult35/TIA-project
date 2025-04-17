@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef} from 'react';
 import { buildFileNoteTree } from '../services/fileService';
 import FileNoteTree from '../classtypes/FileNoteTree';
-import EditorAndStoreWrapper from '../components/EditorAndStoreWrapper';
+import DisplayAndFileStore from '../components/DisplayAndFileStore';
 
 interface HomeProps{
-  isLoggedIn:Boolean;
+  isLoggedIn:boolean;
 }
 
 
@@ -17,10 +17,7 @@ const Home: React.FC<HomeProps> = ({isLoggedIn}) => {
 
     const [ready,setReady] = useState<boolean>(false);
 
-    //FILES DONT LOAD !!!!!!!!!
     //TODO: ERROR WHEN NOT LOGGED IN
-    //TODO: DOESNT UPDATE AFTER FIRST ADD FILE
-    //TODO: 
     useEffect(() => {
       buildFileNoteTree(null,"")
         .then((fnt) =>{
@@ -40,7 +37,7 @@ const Home: React.FC<HomeProps> = ({isLoggedIn}) => {
       return(
 
       <>
-      {isLoggedIn && (<EditorAndStoreWrapper isLoggedIn={isLoggedIn} fileNoteTree={fileNoteTree.current}/>)}
+      {isLoggedIn && (<DisplayAndFileStore isLoggedIn={isLoggedIn} isEditable={true} fileNoteTree={fileNoteTree.current}/>)}
 
       {!isLoggedIn && (<> LOG IN to see your files</>)}
       </>

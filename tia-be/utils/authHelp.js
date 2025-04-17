@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 //
-const {checkFriendship} = require('../models/users')
+const {checkFriendship} = require('../models/usersModel')
 
 //token auth
 const jwt = require('jsonwebtoken');

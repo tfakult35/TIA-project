@@ -8,6 +8,7 @@ exports.getUser = function(username){
     );
 }
 
+// -------- REGISTER --------
 exports.addUser = function(username,password,user_desc){
 
     return pool.query(
@@ -17,7 +18,8 @@ exports.addUser = function(username,password,user_desc){
 
 }
 
-//looks up friendship
+
+// -------- CHECKS IF user_id1 AND user_id2 ARE FRIENDS --------
 exports.checkFriendship = function(user_id1, user_id2){
     const [u1, u2] = user_id1 < user_id2 ? [user_id1, user_id2] : [user_id2, user_id1];
     console.log("CHECKFREINDSHIT:", user_id1);
@@ -28,9 +30,28 @@ exports.checkFriendship = function(user_id1, user_id2){
     )  
 }
 
+// -------- GET user_id'S GROUPS --------
 exports.getUserGroups = function(user_id){
     return pool.query(
         'SELECT * FROM group_members gm WHERE gm.user_id = $1',
+        [user_id]
+    )
+}
+
+
+exports.getFriends = function(user_id){
+    return pool.query(
+        `SELECT u.username as friend
+        FROM users u 
+        JOIN friendships f ON f.user_id1 = u.user_id
+        WHERE u.user_id = $1
+        
+        UNION
+
+        SELECT u.username as friend
+        FROM users u
+        JOIN friendships f ON f.user_id2 = u.user_id
+        WHERE u.user_id = $2`,
         [user_id]
     )
 }

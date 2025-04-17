@@ -6,7 +6,7 @@ var router = express.Router();
 
 var {getUserFileHeaders,getFileOwner, getFileContent, createNewFile, setContent} = require('../../models/filesModel');
 var {determineLogInJWT,getRelativePrivilege} = require('../../utils/authHelp');
-const { getUserGroups } = require('../../models/users');
+const { getUserGroups } = require('../../models/usersModel');
 
 
 //----- CREATE NEW BLANK FILE WITH file_name AND a_v = 5 OWNED BY USER -----

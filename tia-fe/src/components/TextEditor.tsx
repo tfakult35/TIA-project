@@ -8,15 +8,17 @@ interface TextEditorProps {
   currentFile: number|null;
   setCurrentFile: Function;
   fileNoteTree: FileNoteTree;
+  isEditable: boolean;
 }
 
 
-const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fileNoteTree }) => {
+const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fileNoteTree, isEditable }) => {
   
   
   const editor = useEditor({
     extensions: [StarterKit],
     content: "",
+    editable: isEditable,
   });
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fi
       {currentFile !== null && editor && (
         <div>
           {fileNoteTree.getFileNote(currentFile).file_name}
-          <button onClick={handleSave}>SAVE</button> <button onClick={handleQuit}>X</button>
+          {isEditable&& (<button onClick={handleSave}>SAVE</button>)} <button onClick={handleQuit}>X</button>
           <EditorContent editor={editor} className="tiptap-editor" />
         </div>
       )}

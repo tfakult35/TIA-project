@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/api/login');
 var fileRouter  = require('./routes/api/files');
+var accountsRouter = require('./routes/api/accounts')
 //-------
 
 console.log("in be now");
@@ -24,9 +25,8 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 app.use('/api/login', loginRouter);
-console.log("ok");
-
 app.use('/api/files', fileRouter);
+app.user('/api/accounts',accountsRouter)
 
 app.listen(3001);
 module.exports = app;

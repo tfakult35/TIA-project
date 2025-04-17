@@ -13,7 +13,7 @@ import RegisterPage from './pages/RegisterPage'
 function App() {
   console.log("starting");
 
-  const [isLoggedIn,setIsLoggedIn] = useState(false);
+  const [isLoggedIn,setIsLoggedIn] = useState<boolean>(false);
   
   useEffect(() => {
     const token = localStorage.getItem('token');
