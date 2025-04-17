@@ -86,3 +86,14 @@ exports.createNewFile = async function(user_id,file_name, parent_file_id){
     }
 
 }
+
+
+//------ SET THE CONTENT OF file_id - CHANGE THE MODIFIED TIME ------
+
+exports.setContent = async function(file_id, content){
+    return pool.query(
+        `UPDATE files
+        SET content = $2, modified_time = NOW() 
+        WHERE file_id = $1`,
+        [file_id, content])
+}

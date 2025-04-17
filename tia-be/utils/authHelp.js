@@ -26,7 +26,6 @@ const getToken = (user_id) => {
 
 // valid token/invalid token + no token, middleware RETURN UNDEFINED
 function determineLogInJWT(req,res,next){
-    console.log(req.headers);
     const token = req.headers["authorization"]; //header only includes token
     if(!token){
         req.user = undefined;
@@ -44,7 +43,6 @@ function determineLogInJWT(req,res,next){
 }
 
 async function getRelativePrivilege(token_id,target_id){
-    console.log(token_id);
     console.log("IN GET RELATIVE PRIVL")
     
     if(!token_id){

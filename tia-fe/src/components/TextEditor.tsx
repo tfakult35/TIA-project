@@ -2,7 +2,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect } from "react";
 import FileNoteTree from "../classtypes/FileNoteTree";
-import { getFileContent } from "../services/fileService";
+import { getFileContent, setContent } from "../services/fileService";
 
 interface TextEditorProps {
   currentFile: number|null;
@@ -12,12 +12,13 @@ interface TextEditorProps {
 
 
 const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fileNoteTree }) => {
+  
+  
   const editor = useEditor({
     extensions: [StarterKit],
     content: "",
   });
 
-  // functions ----------------------------------------------------------------
   useEffect(() => {
     if (!editor || currentFile === null) return;
     
@@ -30,22 +31,24 @@ const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fi
       )
   }, [currentFile, editor]);
 
-  const handleSave = () => {
+  
+  
+  const handleSave = async () => {
     
-    if(!editor){
-        return;
-    }else{
-      //here send to database
+    if(editor && currentFile !== null){
+      await setContent(currentFile,editor.getHTML());
     }
-    //must change state in notefile - last modified, size of content in info context menu 
-    // - use dummy variable here? or send the values themselves
+    
+    console.log("saved");
     
   }
 
   const handleQuit = () => {
     return(setCurrentFile(null))
   }
-  //-------------------------------------------------------------------------------
+
+
+
   return (
     <>
       {currentFile !== null && editor && (

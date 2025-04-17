@@ -1,9 +1,10 @@
 const express = require('express');
+const sanitizeHtml = require('sanitize-html');
 
 var router = express.Router();
 
 
-var {getUserFileHeaders,getFileOwner, getFileContent, createNewFile} = require('../../models/filesModel');
+var {getUserFileHeaders,getFileOwner, getFileContent, createNewFile, setContent} = require('../../models/filesModel');
 var {determineLogInJWT,getRelativePrivilege} = require('../../utils/authHelp');
 const { getUserGroups } = require('../../models/users');
 
@@ -50,7 +51,7 @@ router.get("/user/own", determineLogInJWT, async(req,res) => {
             return res.status(200).json(userFileResult.rows)
         }catch (e){
             console.log(e);
-            return res.status(500);
+            return res.sendStatus(500);
         }
     }
 })
@@ -67,7 +68,7 @@ router.get("/user/:user_id", determineLogInJWT, async (req,res)=>{
 
     } catch(e){
         console.log(e);
-        return res.status(500);
+        return res.sendStatus(500);
     }
 }
 );
@@ -108,11 +109,45 @@ router.get("/:file_id/content", determineLogInJWT, async (req, res) =>{
     }
     catch (e){
         console.log(e);
-        res.status(500);
+        res.sendStatus(500);
     }
 
 });
 
+
+//------ SET THE CONTENT OF file_id, only owner of file; access control ------
+router.post('/:file_id/content',determineLogInJWT, async(req,res)=>{
+    console.log("IN SET CONTENT api");
+    const target_file_id = parseInt(req.params.file_id);
+    const token_id = req.user;
+    const unsanitizedContent = req.body.content;
+    if(!unsanitizedContent){
+        return res.status(400).send("Missing content");
+    }
+    //sanitize html
+    const sanitizedContent = sanitizeHtml(unsanitizedContent);
+
+    if(!token_id){
+        return res.status(401).send("You are not logged in");
+    }else{
+        try{
+            fileOwnerResult = await getFileOwner(target_file_id);
+            if(fileOwnerResult.rowCount === 0){
+                res.status(404).send("No such file");
+            }
+
+            if(fileOwnerResult.rows[0].user_id !== token_id){
+                return res.status(403).send("You are not the owner of this file");
+            }else{
+                await setContent(target_file_id, sanitizedContent);
+                return res.sendStatus(200);
+            }
+        }catch{
+            return res.sendStatus(500);
+        }
+    }
+
+})
 
 
 module.exports = router;

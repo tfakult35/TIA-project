@@ -113,4 +113,25 @@ async function createFileNote(file_name:string, parent_file_id:number|null){
     return result;
 }
 
-export{buildFileNoteTree, getFileContent, createFileNote};
+async function setContent(file_id:number,content:string){
+    const response = await fetch(`/api/files/${file_id}/content`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem("token") || ""
+        },
+        body: JSON.stringify({ "content": content })
+    });
+
+    if(!response.ok){ //FINISH THIS
+        if (response.status >= 500) {
+            throw new Error("API error");
+        } else {
+            throw new Error("ERROR createFIleNote");
+        }
+    }
+
+    return response;
+    
+}
+export{buildFileNoteTree, getFileContent, createFileNote,setContent};
