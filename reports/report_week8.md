@@ -5,7 +5,7 @@
 
 # Info o reportovanej verzii:  
 - Tag: week8                      
-- Obdobie: 8. týždeň,  30.3.2025 - 6.4.2025
+- Obdobie: 8. týždeň,  6.4.2025 - 13.4.2025
 
 # Plán:
 "Develop user access control."
