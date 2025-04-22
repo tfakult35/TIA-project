@@ -57,7 +57,6 @@ const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fi
     <>
       {currentFile !== null && editor && (
         <div>
-          {fileNoteTree.getFileNote(currentFile).file_name}
           {isEditable&& (<button onClick={handleSave}>SAVE</button>)} <button onClick={handleQuit}>X</button>
           <EditorContent editor={editor} className="tiptap-editor" />
         </div>

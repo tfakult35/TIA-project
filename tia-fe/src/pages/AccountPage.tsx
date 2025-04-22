@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getUserDesc, getFriends } from "../services/accountService";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast"
+import { Link } from "react-router-dom";
 
 
 interface AccountPageProps{
@@ -14,8 +15,8 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
 
     const {username} = useParams();
 
-    const [currUsername,setCurrUsername] = useState<string|null>(null);
-    const [friends, setFriends] = useState([]);
+    const [currUsername,setCurrUsername] = useState<string|undefined>(undefined);
+    const [friends, setFriends] = useState<any[]>([]);
 
     const editor = useEditor({
         extensions: [StarterKit],
@@ -47,7 +48,7 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
                 .catch((e) => console.log("Error"));
         }
         
-    }, [editor,isLoggedIn]);
+    }, [editor,isLoggedIn,username]);
     
     if(!isLoggedIn && !username){
         return(
@@ -62,19 +63,26 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
     }else{
         return(
             <div className="account-page">
+
+                {isLoggedIn && (username === undefined) && (
+                 <div className="friendslist">
+                    <h2>Your Friends</h2>
+                        <ul>
+                        {friends.map((friendObj, index) => (
+                            <li key={index}> 
+                                <Link to={`/account/${friendObj.friend}`}> {friendObj.friend } </Link>
+                            </li> 
+                         ))}
+                        </ul>
+                </div>
+                )}
                 <div>
                     <h1>{currUsername}</h1>
+                    <Link to={`/files/${currUsername}`}> Files </Link>
                     <EditorContent editor={editor} className="tiptap-editor" />
 
                 </div>
-                {isLoggedIn && (
-                 <div>
-                 <h2>Your Friends</h2>
-                 <ul>
-                     
-                 </ul>
-             </div>
-                )}
+                
                 
             </div>
         )

@@ -17,8 +17,7 @@ router.post("/", (req, res) => {
                 const userId = result.rows[0].user_id;
                 const hashedPassword = result.rows[0].password; 
                 
-                console.log(hashedPassword);
-                console.log(password);               
+                            
                 
                 comparePassword(password, hashedPassword)
                     .then((isValid) => {
@@ -53,6 +52,16 @@ router.post("/", (req, res) => {
 router.post("/register", (req,res) =>{
     console.log("in register api");
     const {username,password} = req.body; 
+    if(username === undefined || password === undefined){
+        return res.status(400).end();
+    }
+
+    const cleanName = username.replace(/[^a-zA-Z0-9]/g, '');
+
+    if(username !== cleanName){
+        return res.status(400);
+    }
+
     hashPassword(password).then((hpassword)=>{
     addUser(username,hpassword,"")
         .then( () =>{return res.status(200).end();})

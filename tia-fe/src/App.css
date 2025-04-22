@@ -4,6 +4,7 @@
   color: white;
   width: 80%;
   margin: auto;
+  padding-top: 2%;
   padding-inline: 5%;
 }
 
@@ -51,6 +52,24 @@
   border-color: grey;
 }
 
+
+/*------------FRIENDSLIST----------------*/
+
+.friendslist {
+  max-height: 5em;
+  border: solid;
+  border-width: thin;
+  border-color: white;
+  overflow-y: auto;
+  overflow-x: auto;
+
+
+}
+
+.friendslist ul{
+  list-style-type: none;
+
+}
 /*--------------------------------------*/
 .file-store {
     color:white;

@@ -173,6 +173,11 @@ router.post("/:file_id/name",determineLogInJWT, async(req,res) =>{
         return res.status(400).send("Missing content");
     }
 
+    const cleanName = file_name.replace(/[^a-zA-Z0-9]/g, '');
+    if(file_name !== cleanName){
+        return res.status(400).send("Bad characters");
+    }
+
     if(!token_id){
         return res.sendStatus(400);
     }

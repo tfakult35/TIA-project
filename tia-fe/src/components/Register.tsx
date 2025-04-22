@@ -16,6 +16,11 @@ const Register: React.FC = () => {
     const [password, setPassword] = useState('');
 
     const handleSubmit = () => {
+        const cleanedName = username.replace(/[^a-zA-Z0-9]/g, '');
+        if(username !== cleanedName){
+            toast.error("Invalid characters in username.")
+            return;
+        }
         register(username,password)
             .then(()=>{
                 navigate("/login");

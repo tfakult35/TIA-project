@@ -51,16 +51,16 @@ exports.getFriends = function(user_id){
     console.log(user_id);
     return pool.query(
         `SELECT u.username as friend
-        FROM users u 
+        FROM users u
         JOIN friendships f ON f.user_id1 = u.user_id
-        WHERE u.user_id = $1
-        
+        WHERE f.user_id2 = $1
+
         UNION
 
         SELECT u.username as friend
         FROM users u
         JOIN friendships f ON f.user_id2 = u.user_id
-        WHERE u.user_id = $1`,
+        WHERE f.user_id1 = $1;`,
         [user_id]
     )
 }
