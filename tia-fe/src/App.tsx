@@ -3,11 +3,14 @@ import './App.css'
 import Header from './components/Header'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter, Route, Routes} from 'react-router-dom'
+import {Toaster} from 'react-hot-toast';
+
 
 import Home from './pages/Home'
 import LogInPage from './pages/LogInPage'
 import RegisterPage from './pages/RegisterPage'
 import AccountPage from './pages/AccountPage'
+import FilesPage from './pages/FilesPage'
 
 
 
@@ -32,6 +35,7 @@ function App() {
 */
  
   return (
+    <>
     <BrowserRouter>
       <Header isLoggedIn = {isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
       <div className="app-fe">
@@ -41,11 +45,14 @@ function App() {
         <Route path="/register" element={<RegisterPage/>}></Route> 
         <Route path="/account/:username"  element ={<AccountPage isLoggedIn = {isLoggedIn} />}></Route>
         <Route path="/account"  element={<AccountPage isLoggedIn = {isLoggedIn} />}></Route>
+        <Route path="/files/:username" element={<FilesPage/>}></Route>
 
       </Routes>
       </div>
 
     </BrowserRouter>
+    <Toaster position = "bottom-center"/>
+    </>
   )
 }
 

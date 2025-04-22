@@ -4,9 +4,9 @@ const sanitizeHtml = require('sanitize-html');
 var router = express.Router();
 
 
-var {getUserFileHeaders,getFileOwner, getFileContent, createNewFile, setContent,removeFile,renameFile} = require('../../models/filesModel');
+var {getUserFileHeaders,getFileOwner, getFileContent, createNewFile, setContent,removeFile,renameFile,setPrivl} = require('../../models/filesModel');
 var {determineLogInJWT,getRelativePrivilege} = require('../../utils/authHelp');
-const { getUserGroups } = require('../../models/usersModel');
+const { getUserGroups, getAmountOfNotes } = require('../../models/usersModel');
 
 
 //----- CREATE NEW BLANK FILE WITH file_name AND a_v = 5 OWNED BY USER -----
@@ -15,6 +15,19 @@ router.post("/user/", determineLogInJWT, async(req,res)=>{
     if(!token_id){
         return res.status(401).send("You are not logged in");
     }else{
+        //check if not exceeded file amount limit (200 notes)
+        try{
+            const result = await getAmountOfNotes(token_id);
+            console.log(result.rows[0].file_count);
+            if(result.rows[0].file_count > 199){
+                res.status(400).end();
+            }
+
+        }catch (e){
+            console.log(e);
+            res.status(500).end();
+        }
+
         //check if parent_file_id are viable
         const {file_name, parent_file_id} = req.body;
         try{
@@ -180,6 +193,42 @@ router.post("/:file_id/name",determineLogInJWT, async(req,res) =>{
         console.log(e);
         return res.sendStatus(500);
     }
+})
+
+
+router.post("/:file_id/access",determineLogInJWT, async(req,res) =>{
+
+    console.log("IN access CONTENT api");
+
+    const target_file_id = parseInt(req.params.file_id);
+    const token_id = req.user;
+    const privl = parseInt(req.body.privl);
+
+    if(privl === NaN || privl < 0 || privl > 5){
+        return res.status(400).send("Invalid privl")
+    }
+
+    if(!token_id){
+        return res.status(401).send("You are not logged in");
+    }else{
+        try{
+            fileOwnerResult = await getFileOwner(target_file_id);
+            if(fileOwnerResult.rowCount === 0){
+                res.status(404).send("No such file");
+            }
+
+            if(fileOwnerResult.rows[0].user_id !== token_id){
+                return res.status(403).send("You are not the owner of this file");
+            }else{
+                await setPrivl(target_file_id, privl);
+                return res.sendStatus(200);
+            }
+        }catch (e){
+            console.log(e);
+            return res.sendStatus(500);
+        }
+    }
+
 })
 
 router.delete("/:file_id", determineLogInJWT, async (req,res) =>{

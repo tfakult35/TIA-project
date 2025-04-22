@@ -2,6 +2,8 @@ import { useEffect, useState, useRef} from 'react';
 import { buildFileNoteTree } from '../services/fileService';
 import FileNoteTree from '../classtypes/FileNoteTree';
 import DisplayAndFileStore from '../components/DisplayAndFileStore';
+import toast from "react-hot-toast"
+
 
 interface HomeProps{
   isLoggedIn:boolean;
@@ -33,7 +35,7 @@ const Home: React.FC<HomeProps> = ({isLoggedIn}) => {
           setTriggerRender(v=>!v);
           return;
         })
-        .catch((e)=> {console.log(e); setReady(true);})
+        .catch((e)=> {toast.error(e.message); setReady(true);})
 
     },[])
 
@@ -44,7 +46,7 @@ const Home: React.FC<HomeProps> = ({isLoggedIn}) => {
       return(
 
       <>
-      {isLoggedIn && (<DisplayAndFileStore isLoggedIn={isLoggedIn} isEditable={true} fileNoteTree={fileNoteTree.current}/>)}
+      {isLoggedIn && (<DisplayAndFileStore isEditable={true} fileNoteTree={fileNoteTree.current}/>)}
 
       {!isLoggedIn && (<> LOG IN to see your files</>)}
       </>

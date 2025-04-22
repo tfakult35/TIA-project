@@ -3,6 +3,8 @@ import StarterKit from "@tiptap/starter-kit";
 import { useEffect } from "react";
 import FileNoteTree from "../classtypes/FileNoteTree";
 import { getFileContent, setContent } from "../services/fileService";
+import toast from "react-hot-toast"
+
 
 interface TextEditorProps {
   currentFile: number|null;
@@ -29,7 +31,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fi
         editor.commands.setContent(getFileContentResult);        
       })
       .catch((e)=>
-        {console.log(e);}
+        {toast.error(e.message);}
       )
   }, [currentFile, editor]);
 

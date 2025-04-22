@@ -174,4 +174,28 @@ async function rename(file_id:Number, file_name:string){
 
     return response;
 }
-export{buildFileNoteTree, getFileContent, createFileNote,setContent,deleteFileNote,rename};
+
+
+async function changeAccessControl(file_id:Number,privl:number){
+    const response = await fetch(`/api/files/${file_id}/access`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem("token") || "", 
+        },
+        body: JSON.stringify({ "privl": privl })
+    });
+
+    if(!response.ok){ //FINISH THIS
+        if (response.status >= 500) {
+            throw new Error("API error");
+        } else {
+            throw new Error("ERROR ChangeAccessControl");
+        }
+    }
+
+    return response;
+
+}
+export{buildFileNoteTree, getFileContent, createFileNote,
+    setContent,deleteFileNote,rename,changeAccessControl};

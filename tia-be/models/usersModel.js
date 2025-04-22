@@ -64,3 +64,13 @@ exports.getFriends = function(user_id){
         [user_id]
     )
 }
+
+
+//-----RETURNS HOW MANY FILES DOES USER HAVE, FOR LIMITS -----
+exports.getAmountOfNotes = function(user_id){
+    return pool.query(
+    `SELECT COUNT(*) AS file_count
+    FROM user_files
+    WHERE user_id = $1 `,
+    [user_id])
+}

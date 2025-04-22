@@ -7,8 +7,6 @@ interface HeaderProps{
 }
 
 
-//WHY doesnt home rerender when I change isLoggedIn
-
 const Header:React.FC<HeaderProps> = ({isLoggedIn,setIsLoggedIn}) => {
     return (
         <>
@@ -27,6 +25,8 @@ const Header:React.FC<HeaderProps> = ({isLoggedIn,setIsLoggedIn}) => {
                    <li className="nav-item"><Link className="nav-link" to="/">Groups</Link></li>                       
                    <li className="nav-item"><Link className="nav-link" to="/account">Account</Link></li>
                    {!isLoggedIn && (<li className="nav-item"><Link className="nav-link" to="/login">Log in</Link></li>)}
+                   {isLoggedIn && ( <li className="nav-item"><button className="nav-link btn btn-link" onClick= {() =>logout(setIsLoggedIn)}>Log out</button></li>)}
+
                 </ul>
 
 
@@ -37,7 +37,6 @@ const Header:React.FC<HeaderProps> = ({isLoggedIn,setIsLoggedIn}) => {
 
         </nav>
 
-        {isLoggedIn && (<button onClick= {() =>logout(setIsLoggedIn)}>Log out</button>)}
         </>
 
 

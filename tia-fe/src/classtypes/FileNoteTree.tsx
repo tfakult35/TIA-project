@@ -1,5 +1,5 @@
 import FileNoteHeaderType from "./FileNoteHeaderType";
-import { createFileNote, deleteFileNote, rename} from "../services/fileService";
+import { createFileNote, deleteFileNote, rename, changeAccessControl} from "../services/fileService";
 
 class FileNoteTree{
     
@@ -100,6 +100,32 @@ class FileNoteTree{
         this.idMap.get(id)!.file_name = file_name; 
         
     }
+
+    //-----------SET ACCESS CONTROL, ALL CHILDREN WITH LOWER ACCESS VAL CHANGE TOO-------
+    public async setAccessControl(id:Number, privl:number){
+        if(!this.idMap.get(id) ) return;
+        //must change if parent is higher privl then you cant change
+        const parent_id = this.getFileNote(id).parent_id
+        if((parent_id !== null) && (this.getFileNote(parent_id).access_value > privl )){
+            throw new Error("Parent can't have higher access value than child")
+        }
+
+        try{
+            await changeAccessControl(id,privl);
+            this.idMap.get(id)!.access_value = privl;
+        }catch(e){
+            throw e;
+        }
+        for(const child of this.getChildrenFN(id)){
+            if(child.access_value < privl) {
+                await this.setAccessControl(child.file_id,privl);
+                
+            }
+        }
+
+        
+    }
+
 
     //---------------------------------------------
 

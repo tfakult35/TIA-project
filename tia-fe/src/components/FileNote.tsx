@@ -1,6 +1,9 @@
 import FileNoteType from "../classtypes/FileNoteHeaderType"
 import { useState } from "react"
 import FileNoteTree from "../classtypes/FileNoteTree";
+import toast from "react-hot-toast"
+
+
 
 
 interface ContextMenuProps {
@@ -12,12 +15,25 @@ interface ContextMenuProps {
   file_id:number;
   setTriggerRender: Function;
   setName:Function;
+  isEditable:boolean;
 }
 
-const ContextMenu: React.FC<ContextMenuProps> = ({fileNoteTree,positionX,positionY,menuVisible,setMenuVisible,file_id,setTriggerRender, setName}) =>{
+const ContextMenu: React.FC<ContextMenuProps> = ({
+  fileNoteTree,
+  positionX,
+  positionY,
+  menuVisible,
+  setMenuVisible,
+  file_id,
+  setTriggerRender, 
+  setName,
+  isEditable}) =>{
   
   const [renaming, setRenaming] = useState<boolean>(false);
+  const [accessMenu, setAccessMenu] = useState<boolean>(false);
+  
   const [newName, setNewName] = useState<string>(fileNoteTree.getFileNote(file_id).file_name);
+  const [accessValue, setAccessValue] = useState<number>(fileNoteTree.getFileNote(file_id).access_value);
 
   const handleCreate = async (e:React.MouseEvent<HTMLLIElement>)=>{
     e.stopPropagation();
@@ -25,7 +41,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({fileNoteTree,positionX,positio
     try{
       await fileNoteTree.addNewFileNote('NewFilechild',file_id);
     }
-    catch (e){console.log(e)}
+    catch (e:any){toast.error(e.message || "Error")}
    
     setTriggerRender((v:boolean)=>!v);
     setMenuVisible(false);
@@ -38,6 +54,12 @@ const ContextMenu: React.FC<ContextMenuProps> = ({fileNoteTree,positionX,positio
 
     setRenaming(true);
    
+  }
+
+  const handleAccessControl = (e:React.MouseEvent<HTMLLIElement>) =>{
+    e.stopPropagation();
+    setAccessMenu(true);
+
   }
 
 
@@ -64,15 +86,23 @@ const ContextMenu: React.FC<ContextMenuProps> = ({fileNoteTree,positionX,positio
     try{
       fileNoteTree.renameFileNote(file_id,cleanedName);
 
-    }catch (e){
-      console.log(e);
-    }
+    }catch (e:any){toast.error(e.message || "Error")}
     setName(cleanedName);
     setMenuVisible(false);
     setRenaming(false);
   }
-  
 
+
+  const submitAccess = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    setAccessValue(value);
+    try {
+      await fileNoteTree.setAccessControl(file_id, value);
+    }catch (e:any){toast.error(e.message || "Error")}
+
+    setAccessMenu(false);
+    setMenuVisible(false);
+  }
   return(
   <div className="contextMenu" style ={{ position: 'absolute',
       top: `${positionY}px`,
@@ -95,12 +125,21 @@ const ContextMenu: React.FC<ContextMenuProps> = ({fileNoteTree,positionX,positio
             autoFocus
           />
         </div>
+      ) : accessMenu ? (
+        <div onClick={(e) => e.stopPropagation()}>
+          <label><input type="radio" name="access" value={5} onChange={submitAccess} /> Private</label><br />
+          <label><input type="radio" name="access" value={1} onChange={submitAccess} /> Friends</label><br />
+          <label><input type="radio" name="access" value={2} onChange={submitAccess} /> Group</label><br />
+          <label><input type="radio" name="access" value={0} onChange={submitAccess} /> Public</label><br />
+        </div>
       ) : (
         <ul>
-          <li onClick={handleCreate}>   NewNote</li>
-          <li onClick={handleRename}>   Rename</li>
-          <li onClick={handleGetInfo}>  GetInfo</li>
-          <li onClick={handleDelete}>   Delete</li>
+          { isEditable && (<li onClick={handleCreate}>   New Note</li>)}
+          { isEditable && (<li onClick={handleRename}>   Rename</li>)}
+          { isEditable && (<li onClick={handleAccessControl}>   Access control</li>)}
+
+          <li onClick={handleGetInfo}>  Get Info</li>
+          { isEditable && (<li onClick={handleDelete}>   Delete</li>)}
         </ul>
       )}
   </div>);
@@ -113,11 +152,16 @@ interface FileNoteProps {
     fileNoteTree:FileNoteTree;
     setCurrentFile:Function;
     setTriggerRender:Function;
+    isEditable:boolean;
 }
 
 
 
-const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree,setCurrentFile,setTriggerRender}) => {
+const FileNote: React.FC<FileNoteProps> = ({fileNote,
+                                          fileNoteTree,
+                                          setCurrentFile,
+                                          setTriggerRender,
+                                          isEditable}) => {
 
 
     //pass setter for text editor as a prop 
@@ -145,8 +189,8 @@ const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree,setCurrentFile
     }
     
 
+    console.log("filenote",isEditable);
     const hasChildren = fileNoteTree.getChildrenFN(fileNote.file_id).length > 0;
-
 
     return(
 
@@ -161,7 +205,11 @@ const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree,setCurrentFile
         <ul>
           {fileNoteTree.getChildrenFN(fileNote.file_id).map((childNote) => (
             <li key={childNote.file_id}>
-              <FileNote fileNote={childNote} fileNoteTree={fileNoteTree} setCurrentFile={setCurrentFile} setTriggerRender={setTriggerRender}/>
+              <FileNote fileNote={childNote} 
+              fileNoteTree={fileNoteTree} 
+              setCurrentFile={setCurrentFile} 
+              setTriggerRender={setTriggerRender}
+              isEditable={isEditable}/>
             </li>
           ))}
         </ul>
@@ -176,6 +224,7 @@ const FileNote: React.FC<FileNoteProps> = ({fileNote,fileNoteTree,setCurrentFile
         file_id={fileNote.file_id}
         setTriggerRender={setTriggerRender}
         setName = {setName}
+        isEditable = {isEditable}
         />
     )}
     </>

@@ -6,9 +6,10 @@ import { useState,useEffect } from 'react';
 interface FileStoreProp {
     fileNoteTree:FileNoteTree;
     setCurrentFile:Function;
+    isEditable:boolean;
 }
 
-const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile}) =>{
+const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile,isEditable}) =>{
 
     const [triggerRender,setTriggerRender] = useState<boolean>(true);
 
@@ -22,14 +23,15 @@ const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile}) =>{
     return (
         <div className="file-store">
            
-           <button onClick={handleAddFileNote}>+</button>
+           {isEditable && (<button onClick={handleAddFileNote}>+</button>)}
             <ul>
 
             {[...fileNoteTree].map((fileNote) => (           //ITERATES THROUGH THE ROOT FILES
                 <li key={fileNote.file_id}>
                     <FileNote fileNote={fileNote} fileNoteTree={fileNoteTree} 
                     setCurrentFile={setCurrentFile} 
-                    setTriggerRender ={setTriggerRender}/>
+                    setTriggerRender ={setTriggerRender}
+                    isEditable = {isEditable}/>
                 </li>
             ))}
 

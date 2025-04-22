@@ -4,16 +4,16 @@ import { useEffect, useState } from 'react';
 import FileNoteTree from '../classtypes/FileNoteTree';
 
 interface DisplayAndFileStoreProps{
-  isLoggedIn:boolean;
   isEditable:boolean;
   fileNoteTree:FileNoteTree
 }
 
 
-const DisplayAndFileStore: React.FC<DisplayAndFileStoreProps> = ({isLoggedIn,isEditable,fileNoteTree}) => { 
+const DisplayAndFileStore: React.FC<DisplayAndFileStoreProps> = ({isEditable,fileNoteTree}) => { 
     
 
     const [currentFile,setCurrentFile] = useState<number|null>(null);
+  
 
     return(
 
@@ -21,7 +21,7 @@ const DisplayAndFileStore: React.FC<DisplayAndFileStoreProps> = ({isLoggedIn,isE
     <div className='container'>
       <div className='row'>
         <div className='col-3'>  
-          <FileStore fileNoteTree={fileNoteTree} setCurrentFile={setCurrentFile}>
+          <FileStore fileNoteTree={fileNoteTree} setCurrentFile={setCurrentFile} isEditable={isEditable}>
 
           </FileStore>
         </div>

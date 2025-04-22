@@ -16,7 +16,9 @@ router.get("/desc/:username", async (req,res) => {
             return res.status(400).send("No such user");
         }
 
-        return res.status(200).json({'username' : getUserResult.rows[0].username, 'user_desc' : getUserResult.rows[0].user_desc});
+        return res.status(200).json({'user_id' : getUserResult.rows[0].user_id,
+                'username' : getUserResult.rows[0].username, 
+                'user_desc' : getUserResult.rows[0].user_desc});
 
     }catch(e){
         console.log(e);

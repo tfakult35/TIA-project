@@ -3,6 +3,8 @@ import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useState } from "react";
 import { getUserDesc, getFriends } from "../services/accountService";
 import { useParams } from "react-router-dom";
+import toast from "react-hot-toast"
+
 
 interface AccountPageProps{
     isLoggedIn:boolean;
@@ -34,7 +36,7 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
             editor.commands.setContent(result.user_desc);
             setCurrUsername(result.username);
         })
-        .catch((e)=> console.log("Error"));
+        .catch((e)=> {toast.error(e.message); return;});
 
 
         if (isLoggedIn) {

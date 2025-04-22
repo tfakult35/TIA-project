@@ -118,3 +118,12 @@ exports.renameFile = async function(file_id, file_name){
         [file_id,file_name]
     )
 }
+
+
+//-------SET PRIVL-----------
+exports.setPrivl = async function(file_id,privl){
+    return pool.query(
+        "UPDATE access_values SET access_value = $2 WHERE file_id = $1",
+        [file_id, privl]
+    )
+}

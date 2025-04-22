@@ -40,6 +40,16 @@
 
 }
 
+/*---------LOG IN WINDOW-------------*/
+
+.login-window {
+  background:#2f2f2f;
+  color:white;
+  text-align: center;
+  border: solid;
+  border-width: thin;
+  border-color: grey;
+}
 
 /*--------------------------------------*/
 .file-store {
@@ -47,7 +57,6 @@
     background: #2f2f2f;
     height: 100%;
     border: solid;
-    border-style: thin;
     border-color: grey;
     
 }

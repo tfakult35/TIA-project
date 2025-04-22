@@ -2,6 +2,7 @@ import { useState } from "react"
 import {Link} from 'react-router-dom'
 import { login } from "../services/authService"
 import { useNavigate } from "react-router-dom"
+import toast from "react-hot-toast"
 
 interface LogInProps{
     isLoggedIn:Boolean,
@@ -22,7 +23,7 @@ const LogIn: React.FC<LogInProps> = ({isLoggedIn,setIsLoggedIn}) => {
                 navigate("/");
             })
             .catch((error) => {
-                console.log(error.message); //add error message ui
+                toast.error(error.message); //add error message ui
             });
         
     }
@@ -30,15 +31,15 @@ const LogIn: React.FC<LogInProps> = ({isLoggedIn,setIsLoggedIn}) => {
     // controlled/uncontrolled input
     return(
 
-        <div>
+        <div className="login-window">
             <h1>LOG IN</h1>
-            Username:
-            <input value={username} onChange={(e) => setUsername(e.target.value)}></input>              
-            Password:
-            <input value={password} onChange={(e) => setPassword(e.target.value)}></input>
-            <button onClick={handleSubmit}>SUBMIT</button>
+            Username: <br/>
+            <input value={username} onChange={(e) => setUsername(e.target.value)}></input>  <br/>            
+            Password:<br/>
+            <input value={password} onChange={(e) => setPassword(e.target.value)}></input><br/>
+            <button onClick={handleSubmit}>SUBMIT</button><br/>
 
-            <Link to ="/register">Don't have an account? Register. </Link>
+            <Link to ="/register">Don't have an account? Register. </Link><br/>
 
         </div>
 
