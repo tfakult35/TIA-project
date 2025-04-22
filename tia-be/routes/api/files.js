@@ -4,7 +4,7 @@ const sanitizeHtml = require('sanitize-html');
 var router = express.Router();
 
 
-var {getUserFileHeaders,getFileOwner, getFileContent, createNewFile, setContent} = require('../../models/filesModel');
+var {getUserFileHeaders,getFileOwner, getFileContent, createNewFile, setContent,removeFile,renameFile} = require('../../models/filesModel');
 var {determineLogInJWT,getRelativePrivilege} = require('../../utils/authHelp');
 const { getUserGroups } = require('../../models/usersModel');
 
@@ -36,6 +36,7 @@ router.post("/user/", determineLogInJWT, async(req,res)=>{
     }
 
 })
+
 
 
 //------ GET OWN FILE HEADERS ------
@@ -147,6 +148,65 @@ router.post('/:file_id/content',determineLogInJWT, async(req,res)=>{
         }
     }
 
+})
+
+router.post("/:file_id/name",determineLogInJWT, async(req,res) =>{
+
+    const token_id = req.user;
+    const file_name = req.body.file_name;
+    const target_file_id = parseInt(req.params.file_id);
+
+    if(!file_name){
+        return res.status(400).send("Missing content");
+    }
+
+    if(!token_id){
+        return res.sendStatus(400);
+    }
+
+    try{
+        fileOwnerResult = await getFileOwner(target_file_id);
+        if(fileOwnerResult.rowCount === 0){
+            res.status(404).send("No such file");
+        }
+
+        if(fileOwnerResult.rows[0].user_id !== token_id){
+            return res.status(403).send("You are not the owner of this file");
+        }else{
+            await renameFile(target_file_id, file_name);
+            return res.sendStatus(200);
+        }
+    }catch (e){
+        console.log(e);
+        return res.sendStatus(500);
+    }
+})
+
+router.delete("/:file_id", determineLogInJWT, async (req,res) =>{
+    console.log("DELETEEE");
+    token_id = req.user;
+    const target_file_id = parseInt(req.params.file_id);
+
+    if(!token_id){
+        return res.sendStatus(400);
+    }
+
+    try{
+        fileOwnerResult = await getFileOwner(target_file_id);
+        if(fileOwnerResult.rowCount === 0){
+            res.status(404).send("No such file");
+        }
+
+        if(fileOwnerResult.rows[0].user_id !== token_id){
+            return res.status(403).send("You are not the owner of this file");
+        }else{
+            await removeFile(target_file_id);
+            return res.sendStatus(200);
+        }
+    }catch (e){
+        console.log(e);
+        return res.sendStatus(500);
+    }
 })
 
 

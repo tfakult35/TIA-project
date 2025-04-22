@@ -25,7 +25,7 @@ const Header:React.FC<HeaderProps> = ({isLoggedIn,setIsLoggedIn}) => {
                <ul className="navbar-nav mr-auto">
                    <li className="nav-item"><Link className="nav-link" to="/">Notes</Link></li>
                    <li className="nav-item"><Link className="nav-link" to="/">Groups</Link></li>                       
-                   <li className="nav-item"><Link className="nav-link" to="/">Account</Link></li>
+                   <li className="nav-item"><Link className="nav-link" to="/account">Account</Link></li>
                    {!isLoggedIn && (<li className="nav-item"><Link className="nav-link" to="/login">Log in</Link></li>)}
                 </ul>
 

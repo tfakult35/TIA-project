@@ -1,3 +1,47 @@
+/*--------------ACCOUNT PAGE----------------*/
+.account-page {
+  background-color: #2f2f2f;
+  color: white;
+  width: 80%;
+  margin: auto;
+  padding-inline: 5%;
+}
+
+/*------------CONTEXT MENU----------*/
+
+.contextMenu {
+  min-width: 10em;
+  width: 8%;
+  border: solid;
+  border-color: rgb(187, 187, 187);
+  border-width: thin;
+}
+
+.contextMenu ul{
+  list-style-type: none;
+  margin-left:0;
+  padding:1%;
+}
+
+.contextMenu li{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+      /*383838*/
+  border: solid;
+  border-color: grey;
+  border-width: thin;
+    
+  margin:1%;
+}
+
+.contextMenu li:hover{
+  background-color: rgb(187, 187, 187);
+
+}
+
+
+/*--------------------------------------*/
 .file-store {
     color:white;
     background: #2f2f2f;

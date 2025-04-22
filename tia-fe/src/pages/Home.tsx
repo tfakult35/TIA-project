@@ -15,15 +15,22 @@ const Home: React.FC<HomeProps> = ({isLoggedIn}) => {
     var fileNoteTree = useRef<FileNoteTree>(new FileNoteTree(new Map(),new Map()));
 
 
+    const [triggerRender,setTriggerRender] = useState<boolean>(false);
     const [ready,setReady] = useState<boolean>(false);
 
     //TODO: ERROR WHEN NOT LOGGED IN
     useEffect(() => {
+      console.log("isloggedin",isLoggedIn);
+      if(!isLoggedIn){
+        setReady(true);
+        return;
+      }
       buildFileNoteTree(null,"")
         .then((fnt) =>{
           console.log("built!");
           fileNoteTree.current = fnt;
           setReady((v:boolean)=>true);
+          setTriggerRender(v=>!v);
           return;
         })
         .catch((e)=> {console.log(e); setReady(true);})

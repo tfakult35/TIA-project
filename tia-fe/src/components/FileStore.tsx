@@ -1,6 +1,6 @@
 import FileNote from './FileNote'
 import FileNoteTree from '../classtypes/FileNoteTree'
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 //import "../App.css"
 
 interface FileStoreProp {
@@ -11,6 +11,8 @@ interface FileStoreProp {
 const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile}) =>{
 
     const [triggerRender,setTriggerRender] = useState<boolean>(true);
+
+    
 
     const handleAddFileNote = async () => {          
         await fileNoteTree.addNewFileNote("NewFile",null); ///TODO: add enter file name popup?
@@ -26,7 +28,8 @@ const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile}) =>{
             {[...fileNoteTree].map((fileNote) => (           //ITERATES THROUGH THE ROOT FILES
                 <li key={fileNote.file_id}>
                     <FileNote fileNote={fileNote} fileNoteTree={fileNoteTree} 
-                    setCurrentFile={setCurrentFile}/>
+                    setCurrentFile={setCurrentFile} 
+                    setTriggerRender ={setTriggerRender}/>
                 </li>
             ))}
 

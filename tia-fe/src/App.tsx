@@ -7,16 +7,21 @@ import { BrowserRouter, Route, Routes} from 'react-router-dom'
 import Home from './pages/Home'
 import LogInPage from './pages/LogInPage'
 import RegisterPage from './pages/RegisterPage'
+import AccountPage from './pages/AccountPage'
 
 
 
 function App() {
   console.log("starting");
 
-  const [isLoggedIn,setIsLoggedIn] = useState<boolean>(false);
-  
-  useEffect(() => {
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
     const token = localStorage.getItem('token');
+    return !!token;
+  });
+
+  /* useEffect(() => {
+    const token = localStorage.getItem('token');
+    console.log("token:", token);
     if (token) {
         setIsLoggedIn(true);  //need to verify the token in backend heree
     }
@@ -24,15 +29,19 @@ function App() {
       setIsLoggedIn(false);
     }
   }, []);
-
+*/
+ 
   return (
     <BrowserRouter>
       <Header isLoggedIn = {isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
       <div className="app-fe">
       <Routes>
-        <Route path="/" element={<Home isLoggedIn = {isLoggedIn}/>}></Route>
-        <Route path="/login" element={<LogInPage isLoggedIn = {isLoggedIn} setIsLoggedIn = {setIsLoggedIn} />}> </Route>
+        <Route path="/"         element={<Home isLoggedIn = {isLoggedIn}/>}></Route>
+        <Route path="/login"    element={<LogInPage isLoggedIn = {isLoggedIn} setIsLoggedIn = {setIsLoggedIn} />}> </Route>
         <Route path="/register" element={<RegisterPage/>}></Route> 
+        <Route path="/account/:username"  element ={<AccountPage isLoggedIn = {isLoggedIn} />}></Route>
+        <Route path="/account"  element={<AccountPage isLoggedIn = {isLoggedIn} />}></Route>
+
       </Routes>
       </div>
 

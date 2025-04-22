@@ -1,3 +1,4 @@
+const e = require('express');
 var pool = require('../config/db.js')
 
 exports.getUser = function(username){
@@ -5,6 +6,13 @@ exports.getUser = function(username){
     return pool.query(
         "select * from users u where u.username = $1",
         [username]
+    );
+}
+
+exports.getUserById = function(user_id){
+    return pool.query(
+        "select * from users u where u.user_id = $1",
+        [user_id]
     );
 }
 
@@ -38,8 +46,9 @@ exports.getUserGroups = function(user_id){
     )
 }
 
-
+// --------- GET user_id FRIENDS ---------
 exports.getFriends = function(user_id){
+    console.log(user_id);
     return pool.query(
         `SELECT u.username as friend
         FROM users u 
@@ -51,7 +60,7 @@ exports.getFriends = function(user_id){
         SELECT u.username as friend
         FROM users u
         JOIN friendships f ON f.user_id2 = u.user_id
-        WHERE u.user_id = $2`,
+        WHERE u.user_id = $1`,
         [user_id]
     )
 }

@@ -97,3 +97,24 @@ exports.setContent = async function(file_id, content){
         WHERE file_id = $1`,
         [file_id, content])
 }
+
+// ---------- REMOVE FILE ------------
+
+//I HAVE TO DELETE ALL CHILDREN --- DO I?
+exports.removeFile = async function(file_id){
+    return pool.query(
+        `DELETE FROM files f
+        WHERE f.file_id = $1`,
+        [file_id]
+    )
+}
+
+
+//-------RENAME FILE -------------
+
+exports.renameFile = async function(file_id, file_name){
+    return pool.query(
+        "UPDATE files SET file_name = $2 WHERE file_id = $1",
+        [file_id,file_name]
+    )
+}

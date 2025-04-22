@@ -134,4 +134,44 @@ async function setContent(file_id:number,content:string){
     return response;
     
 }
-export{buildFileNoteTree, getFileContent, createFileNote,setContent};
+
+
+async function deleteFileNote(file_id:Number){
+    const response = await fetch(`/api/files/${file_id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem("token") || ""
+        }
+    });
+
+    if (!response.ok) {
+        if (response.status >= 500) {
+            throw new Error("API error");
+        } else {
+            throw new Error("You are not logged in");
+        }
+    }
+}
+
+async function rename(file_id:Number, file_name:string){
+    const response = await fetch(`/api/files/${file_id}/name`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem("token") || ""
+        },
+        body: JSON.stringify({ "file_name": file_name })
+    });
+
+    if(!response.ok){ //FINISH THIS
+        if (response.status >= 500) {
+            throw new Error("API error");
+        } else {
+            throw new Error("ERROR RenameFileNote");
+        }
+    }
+
+    return response;
+}
+export{buildFileNoteTree, getFileContent, createFileNote,setContent,deleteFileNote,rename};

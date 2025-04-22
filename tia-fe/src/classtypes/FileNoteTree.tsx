@@ -1,5 +1,5 @@
 import FileNoteHeaderType from "./FileNoteHeaderType";
-import { createFileNote } from "../services/fileService";
+import { createFileNote, deleteFileNote, rename} from "../services/fileService";
 
 class FileNoteTree{
     
@@ -38,7 +38,7 @@ class FileNoteTree{
     };
 
 
-    // ----------- FUNCTIONS -----------
+    // ----------- ADD FILE NOTE -----------
     public async addNewFileNote(file_name: string, parent_file_id:number|null){ 
         try{
             const result = await createFileNote(file_name,parent_file_id);
@@ -66,9 +66,42 @@ class FileNoteTree{
         }
     }
     
-    public removeFileNote(id:Number):void{                      //DB need to delete ONLY one file from files, cascades down to its children in each table
-       
+
+    // ----------------- REMOVE FILE NOTE -----------------------
+    public async removeFileNote(id:Number){                      //DB need to delete ONLY one file from files, cascades down to its children in each table
+        const fchildren = this.hierarchyMap.get(id);
+
+        const parent_id = this.idMap.get(id)?.parent_id
+        if(parent_id !== null){
+            const index = this.hierarchyMap.get(Number(parent_id))?.indexOf(id);
+            this.hierarchyMap.get(Number(parent_id))?.splice(Number(index),1);
+        }
+        if(fchildren){
+            for(const c_id of fchildren){
+                
+                this.removeFileNote(c_id);
+            }
+        }
+
+        this.idMap.delete(id);
+        this.hierarchyMap.delete(id);
+        this.rootIds.delete(id);
+        await deleteFileNote(id.valueOf());
+
     }
+
+    // ----------- RENAME FILE NOTE -----------------
+   
+
+    public async renameFileNote(id:Number, file_name:string){
+        if(!this.idMap.get(id)) return;
+        
+        await rename(id,file_name);
+        this.idMap.get(id)!.file_name = file_name; 
+        
+    }
+
+    //---------------------------------------------
 
     public getFileNote(id:Number):FileNoteHeaderType{
         if(!this.idMap.has(id)){

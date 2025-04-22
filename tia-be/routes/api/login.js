@@ -2,7 +2,7 @@ const express = require('express');
 
 
 var router = express.Router();
-var {getUser, addUser} = require('../../models/users');
+var {getUser, addUser, getUserById} = require('../../models/usersModel');
 var {comparePassword, hashPassword, getToken, verifyToken} = require('../../utils/authHelp.js');
 
 
@@ -13,7 +13,7 @@ router.post("/", (req, res) => {
     console.log(username);
     getUser(username)
         .then((result) => {   
-            if (result.rows && result.rows.length === 1) {                
+            if (result.rows && result.rows.length === 1) {   
                 const userId = result.rows[0].user_id;
                 const hashedPassword = result.rows[0].password; 
                 

@@ -26,7 +26,7 @@ app.use('/users', usersRouter);
 
 app.use('/api/login', loginRouter);
 app.use('/api/files', fileRouter);
-app.user('/api/accounts',accountsRouter)
+app.use('/api/accounts',accountsRouter)
 
 app.listen(3001);
 module.exports = app;
