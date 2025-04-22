@@ -1,6 +1,6 @@
 import FileStore from './FileStore'
 import TextEditor from './TextEditor'
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import FileNoteTree from '../classtypes/FileNoteTree';
 
 interface DisplayAndFileStoreProps{

@@ -1,6 +1,6 @@
 import FileNote from './FileNote'
 import FileNoteTree from '../classtypes/FileNoteTree'
-import { useState,useEffect } from 'react';
+import { useState } from 'react';
 //import "../App.css"
 
 interface FileStoreProp {
@@ -12,6 +12,7 @@ interface FileStoreProp {
 const FileStore: React.FC<FileStoreProp> = ({fileNoteTree,setCurrentFile,isEditable}) =>{
 
     const [triggerRender,setTriggerRender] = useState<boolean>(true);
+    console.log(triggerRender);
 
     
 

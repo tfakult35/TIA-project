@@ -20,6 +20,7 @@ const FilesPage: React.FC = () => {
 
     const [triggerRender,setTriggerRender] = useState<boolean>(false);
     const [ready,setReady] = useState<boolean>(false);
+    console.log(triggerRender);
 
     //TODO: ERROR WHEN NOT LOGGED IN
     useEffect(() => {
@@ -35,7 +36,7 @@ const FilesPage: React.FC = () => {
             console.log("built!");
             fileNoteTree.current = fnt;
             
-            setReady((v:boolean)=>true);
+            setReady(()=>true);
             setTriggerRender(v=>!v);
             return;
           })

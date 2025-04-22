@@ -11,6 +11,7 @@ interface LogInProps{
 
 const LogIn: React.FC<LogInProps> = ({isLoggedIn,setIsLoggedIn}) => {
 
+    console.log(isLoggedIn);
     const navigate = useNavigate();
 
     const [username, setUsername] = useState('');

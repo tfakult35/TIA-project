@@ -31,9 +31,13 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   
   const [renaming, setRenaming] = useState<boolean>(false);
   const [accessMenu, setAccessMenu] = useState<boolean>(false);
+
+  console.log(menuVisible);
   
   const [newName, setNewName] = useState<string>(fileNoteTree.getFileNote(file_id).file_name);
   const [accessValue, setAccessValue] = useState<number>(fileNoteTree.getFileNote(file_id).access_value);
+
+  console.log(accessValue);
 
   const handleCreate = async (e:React.MouseEvent<HTMLLIElement>)=>{
     e.stopPropagation();

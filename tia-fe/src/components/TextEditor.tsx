@@ -16,6 +16,7 @@ interface TextEditorProps {
 
 const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fileNoteTree, isEditable }) => {
   
+  console.log(fileNoteTree);
   
   const editor = useEditor({
     extensions: [StarterKit],

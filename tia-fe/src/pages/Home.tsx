@@ -20,6 +20,8 @@ const Home: React.FC<HomeProps> = ({isLoggedIn}) => {
     const [triggerRender,setTriggerRender] = useState<boolean>(false);
     const [ready,setReady] = useState<boolean>(false);
 
+    console.log(triggerRender);
+
     //TODO: ERROR WHEN NOT LOGGED IN
     useEffect(() => {
       console.log("isloggedin",isLoggedIn);
@@ -31,7 +33,7 @@ const Home: React.FC<HomeProps> = ({isLoggedIn}) => {
         .then((fnt) =>{
           console.log("built!");
           fileNoteTree.current = fnt;
-          setReady((v:boolean)=>true);
+          setReady(()=>true);
           setTriggerRender(v=>!v);
           return;
         })

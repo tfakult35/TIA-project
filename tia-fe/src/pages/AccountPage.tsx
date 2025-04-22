@@ -45,7 +45,7 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
                 .then((result) => {
                     setFriends(result); 
                 })
-                .catch((e) => console.log("Error"));
+                .catch(() => console.log("Error"));
         }
         
     }, [editor,isLoggedIn,username]);
