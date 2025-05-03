@@ -89,7 +89,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
 
                         <div className='col-6'>
 
-                        <h2>Friends requests</h2>
+                        <h2>Friend requests</h2>
                         <div className="friendslist">
                                 <ul>
                                 {friendReqs.map((friendReqObj, index) => (

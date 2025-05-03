@@ -74,7 +74,7 @@ exports.getAmountOfNotes = function(user_id){
     [user_id])
 }
 
-
+//-----GETS ALL USERS RECIEVED FRIENDS REQUESTS ------
 exports.getAllFriendsRequests = function(user_id){
     return pool.query(
         `SELECT u.username as friend
@@ -86,7 +86,7 @@ exports.getAllFriendsRequests = function(user_id){
     )
 }
 
-
+//------ RETURNS REQUEST user_id_req -> user_id_rec----
 exports.getFriendsRequests = function(user_id_req, user_id_rec){
     return pool.query(
         `SELECT fr.user_id_req, fr.user_id_rec
@@ -99,6 +99,7 @@ exports.getFriendsRequests = function(user_id_req, user_id_rec){
 
 
 
+//--------- CREATES A FRIENDS REQUEST ------------
 exports.createFriendsRequests = function(user_id_req, user_id_rec){
     return pool.query(
         "insert into friends_requests (user_id_req,user_id_rec) values ($1,$2)",
@@ -106,6 +107,7 @@ exports.createFriendsRequests = function(user_id_req, user_id_rec){
     )
 }
 
+//--------- ACCEPTS FRIEND REQUEST, deletes from friends_requests, inserts into friendships --------------
 exports.acceptFriendsRequests = async function(user_id_req, user_id_rec){
     const client = await pool.connect();
 
@@ -125,6 +127,48 @@ exports.acceptFriendsRequests = async function(user_id_req, user_id_rec){
             `INSERT INTO friendships(user_id1, user_id2) 
             VALUES ($1,2)`,    
         [u1, u2]);
+    
+        await client.query('COMMIT');
+
+    }catch (e){
+        await client.query('ROLLBACK');
+    }finally{
+        client.release();
+    }
+}
+
+//----------DELETES FRIENDSHIP ---------------
+
+exports.deleteFriendship = async function(user_id1, user_id2){
+    const [u1, u2] = user_id1 < user_id2 ? [user_id1, user_id2] : [user_id2, user_id1];
+ 
+    return pool.query(
+        "DELETE FROM friendships f WHERE f.user_id1 = $1 AND f.user_id2 = $2",
+        [u1,u2]
+    )      
+}
+
+
+//------CANCELS FRIEND REQUEST ------------
+// both rec and req
+
+exports.deleteFriendsRequests = async function(user_id1, user_id2){
+    const client = await pool.connect();
+
+    try{
+        client.query('BEGIN');
+
+        client.query(
+            `DELETE 
+            FROM friends_requests fr
+            WHERE fr.user_id_req = $1 AND fr.user_id_rec = $2`,
+        [user_id1, user_id2]);
+
+        client.query(
+            `DELETE 
+            FROM friends_requests fr
+            WHERE fr.user_id_req = $1 AND fr.user_id_rec = $2`,
+        [user_id2, user_id1]);
     
         await client.query('COMMIT');
 

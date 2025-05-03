@@ -2,7 +2,9 @@ const express = require('express');
 
 var router = express.Router();
 
-const { getFriends, getUser, getUserById, getFriendsRequests, createFriendsRequests, checkFriendship, acceptFriendsRequests, getAllFriendsRequests} = require('../../models/usersModel');
+const { getFriends, getUser, getUserById, getFriendsRequests, 
+        createFriendsRequests, checkFriendship, acceptFriendsRequests, 
+        getAllFriendsRequests, deleteFriendsRequests, deleteFriendship} = require('../../models/usersModel');
 const {determineLogInJWT} = require('../../utils/authHelp')
 
 
@@ -95,18 +97,18 @@ router.get('/friends/:username', determineLogInJWT, async(req,res)=>{
 // if else:                                                  >>>SEND FRIEND REQUEST<<<
 //          ADD (req=token_id, rec=user_id) into friends_requests, 
 //          return 200 (PENDING)
-
+// returns Added 
 router.post('/friends/:username', determineLogInJWT, async(req,res)=>{
     const token_id = req.user;
     const username = req.params.username;
     if(token_id === null){
-        return res.status(400).send("Invalid login");
+        return res.status(401).send("Invalid login");
     }
 
     try{
         const getUserResult = await getUser(username);
         if(getUserResult.rowCount === 0){
-            return res.status(400).send("No such user");
+            return res.status(404).send("No such user");
         }
 
         const target_id = getUserResult.rows[0].user_id;
@@ -120,7 +122,7 @@ router.post('/friends/:username', determineLogInJWT, async(req,res)=>{
             return res.status(400).send("Already friends");
         }
 
-        const reqCheckResult = getFriendsRequests(token_id,target_id);
+        const reqCheckResult = await getFriendsRequests(token_id,target_id);
         if(reqCheckResult.rowCount !== 0){
             return res.status(400).send("Already sent")
         }
@@ -133,11 +135,11 @@ router.post('/friends/:username', determineLogInJWT, async(req,res)=>{
         if(recCheckResult.rowCount === 0){
             //SEND FRIEND REQUEST
             await createFriendsRequests(token_id,target_id);
-            return res.status(200).send("Friend request sent!");
+            return res.status(200).json({"Added": false});
         }else{
             //ACCEPT FRIEND REQUEST
             await acceptFriendsRequests(target_id, token_id);
-            return res.status(200).send("Friend request accepted!");
+            return res.status(200).json({"Added": true});
         }
 
 
@@ -147,10 +149,64 @@ router.post('/friends/:username', determineLogInJWT, async(req,res)=>{
 })
 
 
+// ---------- DELETE FRIENDSHIP/CANCEL FRIENDREQUEST ---------------
+// deletes friendship or cancels friend request whether the caller is on rec side or req side of the request
+// should this be the same api call? Probably doesn't matter
+router.delete('/friends/:username',determineLogInJWT, async (req,res)=>{
+    const token_id = req.user
+    const username = req.params.username;
+
+
+
+    if(token_id === null){
+        return res.status(401).send("Log in is required");
+    }
+
+    try{
+
+
+        const getUserResult = await getUser(username);
+        if(getUserResult.rowCount === 0){
+            return res.status(404).send("No such user");
+        }
+
+        const target_id = getUserResult.rows[0].user_id;
+
+       
+        const getFriendsResult = await checkFriendship(token_id,target_id);
+        const reqCheckResult1 = await getFriendsRequests(token_id,target_id);
+        const reqCheckResult2 = await getFriendsRequests(target_id,token_id);
+
+        const reqCheckResultSize = reqCheckResult1.rowCount + reqCheckResult2.rowCount;
+
+        
+
+        if(getFriendsResult.rowCount === 0 && reqCheckResultSize === 0){
+            return res.status(404).send("No such friendship/friend request");
+        }
+
+        if(getFriendsResult.rowCount > 0){
+            await deleteFriendship(token_id,target_id);
+        }
+
+        if(reqCheckResultSize > 0){
+            await deleteFriendsRequests(token_id, target_id);
+        }
+
+        return res.status(200).end();
+        
+
+
+    }catch (e){
+        return res.status(500).send("Database error");
+    }
+
+})
+
 // --------- GET FRIENDS: YOU CAN ONLY GET YOUR OWN ---------
 router.get('/friends',determineLogInJWT, async (req,res)=>{
     const token_id = req.user;
-    if(!token_id){
+    if(token_id === null){
         return res.status(400).send("Log in is required");
     }
 

@@ -1,7 +1,7 @@
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useState } from "react";
-import { getUserDesc, checkFriendship } from "../services/accountService";
+import { getUserDesc, checkFriendship,addFriend, deleteFriend} from "../services/accountService";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast"
 import { Link } from "react-router-dom";
@@ -60,7 +60,25 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
 
 
     const handleAddFriend = async ()=>{
-        
+        try{
+            if(currUsername !== undefined) {
+                const result =  await addFriend(currUsername);
+                setFriendsWith(result ? 1 : 2);     
+            }
+        }catch (e:any){
+            toast.error(e.message);
+        }
+    }
+
+    const handleDeleteFriend = async ()=>{
+        try{
+            if(currUsername !== undefined) {
+                await deleteFriend(currUsername);
+                setFriendsWith(0);
+            }
+        }catch (e:any){
+            toast.error(e.message);
+        }
     }
 
     /* ---------------------------------------------------------------- */
@@ -85,12 +103,12 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
 
                     ) : friendsWith == 1 ? ( 
                         <>
-                            <button>REMOVE FRIEND</button>
+                            <button onClick={handleDeleteFriend}>REMOVE FRIEND</button>
                         </>
                     
                     ) : (
                         <>
-                            <button>CANCEL REQUEST</button>
+                            <button onClick={handleDeleteFriend}>CANCEL REQUEST</button>
                         </>
 
                     ) )}
