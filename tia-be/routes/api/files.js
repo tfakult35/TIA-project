@@ -163,6 +163,7 @@ router.post('/:file_id/content',determineLogInJWT, async(req,res)=>{
 
 })
 
+//RENAME file_id
 router.post("/:file_id/name",determineLogInJWT, async(req,res) =>{
 
     const token_id = req.user;
@@ -200,7 +201,7 @@ router.post("/:file_id/name",determineLogInJWT, async(req,res) =>{
     }
 })
 
-
+//CHANGE ACCESS CONTROL file_id
 router.post("/:file_id/access",determineLogInJWT, async(req,res) =>{
 
     console.log("IN access CONTENT api");
@@ -236,6 +237,7 @@ router.post("/:file_id/access",determineLogInJWT, async(req,res) =>{
 
 })
 
+//DELETE file_id
 router.delete("/:file_id", determineLogInJWT, async (req,res) =>{
     console.log("DELETEEE");
     token_id = req.user;

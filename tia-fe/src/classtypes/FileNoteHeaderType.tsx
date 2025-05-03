@@ -6,6 +6,7 @@ type FileNoteHeaderType = {
     modified_time: string;
     topic: string;
     parent_id: number | null;
+    group_name: string | null;
   };
 
 export default FileNoteHeaderType

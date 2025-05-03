@@ -50,6 +50,7 @@ class FileNoteTree{
                 modified_time: result.modified_time,
                 topic: "",
                 parent_id: parent_file_id,
+                group_name: null
               };
             this.idMap.set(result.file_id, fileNoteHeader);
             this.hierarchyMap.set(result.file_id, []);

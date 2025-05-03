@@ -29,8 +29,12 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   setName,
   isEditable}) =>{
   
+
+  //    Additional menus:
+
   const [renaming, setRenaming] = useState<boolean>(false);
   const [accessMenu, setAccessMenu] = useState<boolean>(false);
+  const [infoMenu, setInfoMenu] = useState<boolean>(false);
 
   console.log(menuVisible);
   
@@ -38,6 +42,8 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   const [accessValue, setAccessValue] = useState<number>(fileNoteTree.getFileNote(file_id).access_value);
 
   console.log(accessValue);
+
+  
 
   const handleCreate = async (e:React.MouseEvent<HTMLLIElement>)=>{
     e.stopPropagation();
@@ -67,9 +73,14 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   }
 
 
-  const handleGetInfo = ()=>{
+  const handleGetInfo = (e:React.MouseEvent<HTMLLIElement>)=>{
+    e.stopPropagation();
 
+    setInfoMenu(true);
+    
   }
+
+
   const handleDelete = async (e:React.MouseEvent<HTMLLIElement>)=>{
     e.stopPropagation();
 
@@ -131,10 +142,20 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         </div>
       ) : accessMenu ? (
         <div onClick={(e) => e.stopPropagation()}>
-          <label><input type="radio" name="access" value={5} onChange={submitAccess} /> Private</label><br />
-          <label><input type="radio" name="access" value={1} onChange={submitAccess} /> Friends</label><br />
-          <label><input type="radio" name="access" value={2} onChange={submitAccess} /> Group</label><br />
-          <label><input type="radio" name="access" value={0} onChange={submitAccess} /> Public</label><br />
+          <label><input type="radio" name="access" value={5} onChange={submitAccess} checked={ 5 === fileNoteTree.getFileNote(file_id).access_value} /> Private</label><br />
+          <label><input type="radio" name="access" value={1} onChange={submitAccess} checked={ 1 === fileNoteTree.getFileNote(file_id).access_value}/> Friends</label><br />
+          <label><input type="radio" name="access" value={2} onChange={submitAccess} checked={ 2 === fileNoteTree.getFileNote(file_id).access_value}/> Group</label><br />
+          <label><input type="radio" name="access" value={0} onChange={submitAccess} checked={ 0 === fileNoteTree.getFileNote(file_id).access_value}/> Public</label><br />
+        </div>
+      
+      ) : infoMenu ? (
+        <div className="infoMenu">
+          {fileNoteTree.getFileNote(file_id).file_name}<br/>
+          {fileNoteTree.getFileNote(file_id).created_time}<br/>
+          {fileNoteTree.getFileNote(file_id).modified_time}<br/>
+          {fileNoteTree.getFileNote(file_id).access_value} <br/>
+          {fileNoteTree.getFileNote(file_id).group_name}<br/>
+          {fileNoteTree.getFileNote(file_id).parent_id}<br/>
         </div>
       ) : (
         <ul>

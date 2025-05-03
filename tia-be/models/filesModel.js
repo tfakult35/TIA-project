@@ -4,11 +4,13 @@ var pool = require('../config/db.js')
 //------> DOESNT RETURN FILES WITH GROUP_ACCESS HERE UNLESS privl=5
 exports.getUserFileHeaders = function(user_id, privl){
     return pool.query(
-        `SELECT f.file_id, f.file_name, av.access_value, f.created_time, f.modified_time, f.topic, fh.file_id1 as parent_id 
+        `SELECT f.file_id, f.file_name, av.access_value, f.created_time, f.modified_time, f.topic, fh.file_id1 as parent_id, g.group_name 
         FROM files f 
         JOIN user_files uf ON f.file_id = uf.file_id
         JOIN access_values av ON f.file_id = av.file_id
         LEFT JOIN file_hierarchy fh ON f.file_id = fh.file_id2
+        LEFT JOIN group_files gf ON f.file_id = gf.file_id
+        LEFT JOIN groups g ON gf.group_id = g.group_id
         WHERE uf.user_id = $1 AND av.access_value <= $2`,
         [user_id,privl]
     )  
