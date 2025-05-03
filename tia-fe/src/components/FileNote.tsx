@@ -1,5 +1,5 @@
 import FileNoteType from "../classtypes/FileNoteHeaderType"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import FileNoteTree from "../classtypes/FileNoteTree";
 import toast from "react-hot-toast"
 
@@ -28,6 +28,25 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   setTriggerRender, 
   setName,
   isEditable}) =>{
+
+
+  //    Clicking outside closes context menu
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(()=>{
+    const handleClickOutside = (event:MouseEvent) => {
+      if(menuRef.current && !menuRef.current.contains(event.target as Node)){
+        setMenuVisible(false);
+        setRenaming(false);
+        setInfoMenu(false);
+      }
+    }
+
+    document.addEventListener("mousedown",handleClickOutside);
+    return () =>{
+      document.removeEventListener("mousedown",handleClickOutside)
+    }
+  },[menuVisible]);
   
 
   //    Additional menus:
@@ -43,7 +62,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 
   console.log(accessValue);
 
-  
 
   const handleCreate = async (e:React.MouseEvent<HTMLLIElement>)=>{
     e.stopPropagation();
@@ -119,7 +137,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     setMenuVisible(false);
   }
   return(
-  <div className="contextMenu" style ={{ position: 'absolute',
+  <div className="contextMenu" ref= {menuRef} style ={{ position: 'absolute',
       top: `${positionY}px`,
       left: `${positionX}px`,
       backgroundColor: 'grey',}}>
@@ -151,11 +169,13 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       ) : infoMenu ? (
         <div className="infoMenu">
           {fileNoteTree.getFileNote(file_id).file_name}<br/>
-          {fileNoteTree.getFileNote(file_id).created_time}<br/>
-          {fileNoteTree.getFileNote(file_id).modified_time}<br/>
+          <b>{"Created time:"}</b><br/>
+          {new Date(fileNoteTree.getFileNote(file_id).created_time).toLocaleString()}<br/>
+          <b>{"Modified time:"}</b><br/>
+          {new Date(fileNoteTree.getFileNote(file_id).modified_time).toLocaleString()}<br/>
+          <b>{"Access value:"}</b><br/>
           {fileNoteTree.getFileNote(file_id).access_value} <br/>
           {fileNoteTree.getFileNote(file_id).group_name}<br/>
-          {fileNoteTree.getFileNote(file_id).parent_id}<br/>
         </div>
       ) : (
         <ul>

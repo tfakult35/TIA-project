@@ -42,6 +42,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fi
     
     if(editor && currentFile !== null){
       await setContent(currentFile,editor.getHTML());
+      fileNoteTree.getFileNote(currentFile).modified_time = new Date().toString();
     }
     
     console.log("saved");

@@ -41,6 +41,11 @@
 
 }
 
+.infoMenu {
+  overflow-x: auto;
+  margin:3%;
+}
+
 /*---------LOG IN WINDOW-------------*/
 
 .login-window {
