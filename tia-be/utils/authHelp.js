@@ -54,7 +54,7 @@ async function getRelativePrivilege(token_id,target_id){
     }
 
     const friends = await checkFriendship(token_id,target_id);
-    return friends ? 1 : 0;
+    return friends.rowCount !== 0 ? 1 : 0;
 
 }
 

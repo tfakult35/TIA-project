@@ -11,6 +11,7 @@ import LogInPage from './pages/LogInPage'
 import RegisterPage from './pages/RegisterPage'
 import AccountPage from './pages/AccountPage'
 import FilesPage from './pages/FilesPage'
+import MyAccountPage from './pages/MyAccountPage'
 
 
 
@@ -44,7 +45,7 @@ function App() {
         <Route path="/login"    element={<LogInPage isLoggedIn = {isLoggedIn} setIsLoggedIn = {setIsLoggedIn} />}> </Route>
         <Route path="/register" element={<RegisterPage/>}></Route> 
         <Route path="/account/:username"  element ={<AccountPage isLoggedIn = {isLoggedIn} />}></Route>
-        <Route path="/account"  element={<AccountPage isLoggedIn = {isLoggedIn} />}></Route>
+        <Route path="/account"  element={<MyAccountPage isLoggedIn = {isLoggedIn} />}></Route>
         <Route path="/files/:username" element={<FilesPage/>}></Route>
 
       </Routes>

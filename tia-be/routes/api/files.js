@@ -77,6 +77,7 @@ router.get("/user/:user_id", determineLogInJWT, async (req,res)=>{
     
     try{
         const privl = await getRelativePrivilege(token_id,target_id);
+        console.log(privl);
         const userFileResult = await getUserFileHeaders(target_id,privl);
         return res.status(200).json(userFileResult.rows);
 

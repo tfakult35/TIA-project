@@ -30,8 +30,7 @@ exports.addUser = function(username,password,user_desc){
 // -------- CHECKS IF user_id1 AND user_id2 ARE FRIENDS --------
 exports.checkFriendship = function(user_id1, user_id2){
     const [u1, u2] = user_id1 < user_id2 ? [user_id1, user_id2] : [user_id2, user_id1];
-    console.log("CHECKFREINDSHIT:", user_id1);
-    console.log("CHECKFREINDSHIT:", user_id2);
+ 
     return pool.query(
         "select * from friendships where user_id1 = $1 AND user_id2 = $2",
         [u1,u2]
@@ -73,4 +72,65 @@ exports.getAmountOfNotes = function(user_id){
     FROM user_files
     WHERE user_id = $1 `,
     [user_id])
+}
+
+
+exports.getAllFriendsRequests = function(user_id){
+    return pool.query(
+        `SELECT u.username as friend
+        FROM friends_requests fr
+        JOIN users u ON u.user_id = fr.user_id_req
+        WHERE fr.user_id_rec = $1`,
+        [user_id]
+
+    )
+}
+
+
+exports.getFriendsRequests = function(user_id_req, user_id_rec){
+    return pool.query(
+        `SELECT fr.user_id_req, fr.user_id_rec
+        FROM friends_requests fr
+        WHERE fr.user_id_req = $1 AND fr.user_id_rec = $2`,
+        [user_id_req, user_id_rec]
+
+    )
+}
+
+
+
+exports.createFriendsRequests = function(user_id_req, user_id_rec){
+    return pool.query(
+        "insert into friends_requests (user_id_req,user_id_rec) values ($1,$2)",
+        [user_id_req,user_id_rec]
+    )
+}
+
+exports.acceptFriendsRequests = async function(user_id_req, user_id_rec){
+    const client = await pool.connect();
+
+    try{
+        client.query('BEGIN');
+
+        client.query(
+            `DELETE 
+            FROM friends_requests fr
+            WHERE fr.user_id_req = $1 AND fr.user_id_rec = $2`,
+        [user_id_req, user_id_rec]);
+
+        const [u1, u2] = user_id_req < user_id_rec ? [user_id_req, user_id_rec] : [user_id_rec, user_id_req];
+
+        //add friendship
+        client.query( 
+            `INSERT INTO friendships(user_id1, user_id2) 
+            VALUES ($1,2)`,    
+        [u1, u2]);
+    
+        await client.query('COMMIT');
+
+    }catch (e){
+        await client.query('ROLLBACK');
+    }finally{
+        client.release();
+    }
 }

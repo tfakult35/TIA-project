@@ -14,6 +14,15 @@ CREATE TABLE "public"."friendships" (
     CHECK ("user_id1" < "user_id2")   
 );
 
+
+CREATE TABLE "public"."friends_requests" (
+    "user_id_req" INT NOT NULL,
+    "user_id_rec" INT NOT NULL,
+    PRIMARY KEY ("user_id_req", "user_id_rec"),
+    FOREIGN KEY ("user_id_req") REFERENCES "public"."users"("user_id") ON DELETE CASCADE, 
+    FOREIGN KEY ("user_id_rec") REFERENCES "public"."users"("user_id") ON DELETE CASCADE,
+)
+
 CREATE TABLE "public"."groups" (
     "group_id" SERIAL PRIMARY KEY,
     "group_name" varchar(100) NOT NULL,
@@ -69,3 +78,4 @@ CREATE TABLE "public"."group_members"(
     FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE CASCADE  
 
 )
+
