@@ -1,7 +1,7 @@
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useState } from "react";
-import { getUserDesc, getFriends, getFriendReqs } from "../services/accountService";
+import { getUserDesc, getFriends, getFriendReqs, deleteFriend, addFriend } from "../services/accountService";
 import toast from "react-hot-toast"
 import { Link } from "react-router-dom";
 
@@ -14,7 +14,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
 
     const [currUsername,setCurrUsername] = useState<string|undefined>(undefined);
     const [friends, setFriends] = useState<string[]>([]);
-    const [friendReqs,setFriendReqs] = useState<any[]>([]); 
+    const [friendReqs,setFriendReqs] = useState<string[]>([]); 
 
     const editor = useEditor({
         extensions: [StarterKit],
@@ -46,13 +46,33 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
 
         getFriendReqs()
             .then((result)=>{
-                setFriendReqs(result);
+                const friendReqsArray = result.map((friendReqObj:any)=> (friendReqObj.friend));
+                setFriendReqs(friendReqsArray);
             })
             .catch(() => console.log("Error"));
     
         
     }, [editor,isLoggedIn]);
 
+
+    const handleAddFriend = async (username:string)=>{
+        try{
+            await addFriend(username);
+            setFriendReqs(arr => arr.filter(u1 => u1 !== username));
+            setFriends(arr => [...arr,username]);
+        }catch(e:any){
+            toast.error(e.message);
+        }
+    }
+
+    const handleDeleteFriend = async (username:string)=>{
+        try{
+            await deleteFriend(username);
+            setFriendReqs(arr => arr.filter(u1 => u1 !== username));
+        }catch(e:any){
+            toast.error(e.message);
+        }
+    }
 
     /* ---------------------------------------------------------------- */
     
@@ -92,9 +112,11 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
                         <h2>Friend requests</h2>
                         <div className="friendslist">
                                 <ul>
-                                {friendReqs.map((friendReqObj, index) => (
+                                {friendReqs.map((friendReq, index) => (
                                     <li key={index}> 
-                                        <Link to={`/account/${friendReqObj.friend}`}> {friendReqObj.friend } </Link> <button>Accept</button> <button>Decline</button>
+                                        <Link to={`/account/${friendReq}`}> {friendReq } </Link> 
+                                        <button onClick = {()=>(handleAddFriend(friendReq))}>Accept</button> 
+                                        <button onClick = {()=>(handleDeleteFriend(friendReq))}>Decline</button>
                                     </li> 
                                 ))}
                                 </ul>

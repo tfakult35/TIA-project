@@ -125,7 +125,7 @@ exports.acceptFriendsRequests = async function(user_id_req, user_id_rec){
         //add friendship
         client.query( 
             `INSERT INTO friendships(user_id1, user_id2) 
-            VALUES ($1,2)`,    
+            VALUES ($1,$2)`,    
         [u1, u2]);
     
         await client.query('COMMIT');
