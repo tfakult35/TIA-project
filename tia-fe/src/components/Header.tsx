@@ -9,7 +9,7 @@ interface HeaderProps{
 
 const Header:React.FC<HeaderProps> = ({isLoggedIn,setIsLoggedIn}) => {
     return (
-        <>
+        <div className='header'>
         <nav className="navbar navbar-expand-lg">
 
 
@@ -37,7 +37,7 @@ const Header:React.FC<HeaderProps> = ({isLoggedIn,setIsLoggedIn}) => {
 
         </nav>
 
-        </>
+        </div>
 
 
     )

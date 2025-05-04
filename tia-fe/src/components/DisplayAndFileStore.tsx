@@ -18,14 +18,14 @@ const DisplayAndFileStore: React.FC<DisplayAndFileStoreProps> = ({isEditable,fil
     return(
 
     <>
-    <div className='container'>
-      <div className='row'>
-        <div className='col-3'>  
+    <div className='container vh-90'>
+      <div className='row perh-100'>
+        <div className='col-md-3 perh-100'>  
           <FileStore fileNoteTree={fileNoteTree} setCurrentFile={setCurrentFile} isEditable={isEditable}>
 
           </FileStore>
         </div>
-        <div className='col-9'>
+        <div className='col-md-9 perh-100'>
           <TextEditor currentFile={currentFile} setCurrentFile={setCurrentFile} fileNoteTree={fileNoteTree} isEditable={isEditable}/>
 
         </div>

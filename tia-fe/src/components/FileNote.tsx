@@ -117,9 +117,9 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     if(cleanedName.trim() === '') return;
 
     try{
-      fileNoteTree.renameFileNote(file_id,cleanedName);
+      await fileNoteTree.renameFileNote(file_id,cleanedName);
 
-    }catch (e:any){toast.error(e.message || "Error")}
+    }catch (e:any){toast.error(e.message)}
     setName(cleanedName);
     setMenuVisible(false);
     setRenaming(false);

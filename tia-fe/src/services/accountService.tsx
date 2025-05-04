@@ -45,7 +45,7 @@ async function getFriends(){
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("You are not logged in");
+            throw new Error("Invalid credentials");
         }
     }
 
@@ -67,7 +67,7 @@ async function getFriendReqs(){
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("You are not logged in");
+            throw new Error("Invalid credentials");
         }
     }
 
@@ -88,7 +88,7 @@ async function checkFriendship(username:string){ //1 friends, 0 not friends, 2 r
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("You are not logged in");
+            throw new Error("Invalid credentials");
         }
     }
 

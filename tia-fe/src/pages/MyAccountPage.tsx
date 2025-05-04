@@ -19,7 +19,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
     const editor = useEditor({
         extensions: [StarterKit],
         content: "",
-        editable: false,
+        editable: true,
       });
     
     useEffect( () => {
@@ -72,6 +72,10 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
         }catch(e:any){
             toast.error(e.message);
         }
+    }
+
+    const handleSaveBio = async () =>{
+        
     }
 
     /* ---------------------------------------------------------------- */
@@ -128,10 +132,8 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
                     <div className='row'>
                         <h1>{currUsername}</h1>
 
-                    
-                    
-                        <EditorContent editor={editor} className="tiptap-editor" />
-                        <button>EDIT BIO</button>
+                        <EditorContent editor={editor} className="tiptap-editor-bio" />
+                        <button onClick={handleSaveBio}>SAVE BIO</button>
 
                     </div>
 

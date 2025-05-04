@@ -112,7 +112,7 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
                         </>
 
                     ) )}
-                    <EditorContent editor={editor} className="tiptap-editor" />
+                    <EditorContent editor={editor} className="tiptap-editor-bio" />
 
                 </div>
                 

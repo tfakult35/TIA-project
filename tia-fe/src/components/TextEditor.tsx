@@ -56,14 +56,16 @@ const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fi
 
 
   return (
-    <>
+    <div className='editor-window'>
       {currentFile !== null && editor && (
         <div>
-          {isEditable&& (<button onClick={handleSave}>SAVE</button>)} <button onClick={handleQuit}>X</button>
+          <div className="editor-buttons">
+            {isEditable&& (<button className="normal-button" onClick={handleSave}>SAVE</button>)} <button className="close-button" onClick={handleQuit}>X</button>
+          </div>
           <EditorContent editor={editor} className="tiptap-editor" />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

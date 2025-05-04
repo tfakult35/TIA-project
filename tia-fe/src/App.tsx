@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import './App.css'
 import Header from './components/Header'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './App.css'
 import { BrowserRouter, Route, Routes} from 'react-router-dom'
 import {Toaster} from 'react-hot-toast';
 

@@ -97,9 +97,12 @@ class FileNoteTree{
     public async renameFileNote(id:Number, file_name:string){
         if(!this.idMap.get(id)) return;
         
-        await rename(id,file_name);
-        this.idMap.get(id)!.file_name = file_name; 
-        
+        try{
+            await rename(id,file_name);
+            this.idMap.get(id)!.file_name = file_name; 
+        }catch(e){
+            throw e;
+        }
     }
 
     //-----------SET ACCESS CONTROL, ALL CHILDREN WITH LOWER ACCESS VAL CHANGE TOO-------
