@@ -37,7 +37,7 @@ const LogIn: React.FC<LogInProps> = ({isLoggedIn,setIsLoggedIn}) => {
             Username: <br/>
             <input value={username} onChange={(e) => setUsername(e.target.value)}></input>  <br/>            
             Password:<br/>
-            <input value={password} onChange={(e) => setPassword(e.target.value)}></input><br/>
+            <input value={password} type="password" onChange={(e) => setPassword(e.target.value)}></input><br/>
             <button onClick={handleSubmit}>SUBMIT</button><br/>
 
             <Link to ="/register">Don't have an account? Register. </Link><br/>

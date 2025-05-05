@@ -122,7 +122,9 @@ button:active{
 /*------------FRIENDSLIST----------------*/
 
 .friendslist {
-  max-height: 5em;
+  background-color:#383838;
+  max-height: 8em;
+  height:8em;
   border: solid;
   border-width: thin;
   border-color: white;
@@ -130,11 +132,25 @@ button:active{
   overflow-x: auto;
 
 
+
+
 }
 
 .friendslist ul{
   list-style-type: none;
 
+}
+
+
+/*------------BIO--------------*/
+.tiptap-editor-bio{
+  background-color:#383838;
+  height:8em;
+  border: solid;
+  border-width: thin;
+  border-color: white;
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
 

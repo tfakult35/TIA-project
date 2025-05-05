@@ -1,7 +1,7 @@
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useState } from "react";
-import { getUserDesc, getFriends, getFriendReqs, deleteFriend, addFriend } from "../services/accountService";
+import { getUserDesc, getFriends, getFriendReqs, deleteFriend, addFriend, setBio } from "../services/accountService";
 import toast from "react-hot-toast"
 import { Link } from "react-router-dom";
 
@@ -75,7 +75,14 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
     }
 
     const handleSaveBio = async () =>{
-        
+        if(editor ){
+            try{
+                await setBio(editor.getHTML());
+            }catch (e:any){
+                toast.error(e.message);
+            }
+      
+          }          
     }
 
     /* ---------------------------------------------------------------- */
@@ -97,10 +104,13 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
                 <div className='container'>
 
                     <div className='row'>
-                        <div className='col-6'>
+                        <div className='col-sm-6'>
                         <h2>Your Friends</h2>
                         <div className="friendslist">
+                                
                                 <ul>
+                                {(friends.length === 0) && (
+                                    <li>You have no friends.</li>)}
                                 {friends.map((friend, index) => (
                                     <li key={index}> 
                                         <Link to={`/account/${friend}`}> {friend } </Link>
@@ -111,11 +121,14 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
                         </div>
 
 
-                        <div className='col-6'>
+                        <div className='col-sm-6'>
 
                         <h2>Friend requests</h2>
                         <div className="friendslist">
+                                
                                 <ul>
+                                {(friendReqs.length === 0) &&  
+                                    (<li>You have no friend requests.</li>)}
                                 {friendReqs.map((friendReq, index) => (
                                     <li key={index}> 
                                         <Link to={`/account/${friendReq}`}> {friendReq } </Link> 
@@ -129,11 +142,10 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
 
                     </div>
 
-                    <div className='row'>
+                    <div >
                         <h1>{currUsername}</h1>
-
-                        <EditorContent editor={editor} className="tiptap-editor-bio" />
                         <button onClick={handleSaveBio}>SAVE BIO</button>
+                        <EditorContent editor={editor} className="tiptap-editor-bio" />
 
                     </div>
 

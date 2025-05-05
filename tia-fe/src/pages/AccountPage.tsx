@@ -43,6 +43,7 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
             if (isLoggedIn && result.username !== undefined){
                 checkFriendship(result.username)
                 .then((result2)=>{
+                    console.log("result2", result2)
                     setFriendsWith(result2);
                 })
                 
@@ -83,6 +84,8 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
 
     /* ---------------------------------------------------------------- */
     
+    //rerenders too much?
+    console.log(friendsWith);
 
     if(!currUsername){
         return(
@@ -96,7 +99,7 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
                 <div>
                     <h1>{currUsername}</h1>
                     <Link to={`/files/${currUsername}`}> Files </Link>
-                    {(isLoggedIn && friendsWith !== undefined) && (friendsWith == 0 ? (   //add if your own account then you cant add yourself as friends / maybe switch to myaccountpage? 
+                    {((isLoggedIn && friendsWith !== 3) && friendsWith !== undefined) && (friendsWith == 0 ? (   //add if your own account then you cant add yourself as friends / maybe switch to myaccountpage? 
                         <>
                             <button onClick={handleAddFriend}>ADD FRIEND</button>
                         </>

@@ -11,7 +11,8 @@ exports.getUserFileHeaders = function(user_id, privl){
         LEFT JOIN file_hierarchy fh ON f.file_id = fh.file_id2
         LEFT JOIN group_files gf ON f.file_id = gf.file_id
         LEFT JOIN groups g ON gf.group_id = g.group_id
-        WHERE uf.user_id = $1 AND av.access_value <= $2`,
+        WHERE uf.user_id = $1 AND av.access_value <= $2
+        ORDER BY f.file_name, av.access_value`,
         [user_id,privl]
     )  
 }

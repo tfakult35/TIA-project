@@ -24,6 +24,7 @@ const Header:React.FC<HeaderProps> = ({isLoggedIn,setIsLoggedIn}) => {
                    <li className="nav-item"><Link className="nav-link" to="/">Notes</Link></li>
                    <li className="nav-item"><Link className="nav-link" to="/">Groups</Link></li>                       
                    <li className="nav-item"><Link className="nav-link" to="/account">Account</Link></li>
+                   <li className="nav-item"><Link className="nav-link" to="/search">Search</Link></li>
                    {!isLoggedIn && (<li className="nav-item"><Link className="nav-link" to="/login">Log in</Link></li>)}
                    {isLoggedIn && ( <li className="nav-item"><button className="nav-link btn btn-link" onClick= {() =>logout(setIsLoggedIn)}>Log out</button></li>)}
 

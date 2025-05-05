@@ -16,6 +16,13 @@ exports.getUserById = function(user_id){
     );
 }
 
+exports.updateUserDesc = function(user_id, user_desc){
+    return pool.query(
+        "UPDATE users SET user_desc = $2 WHERE user_id = $1",
+        [user_id,user_desc]
+    )
+}
+
 // -------- REGISTER --------
 exports.addUser = function(username,password,user_desc){
 
@@ -59,7 +66,7 @@ exports.getFriends = function(user_id){
         SELECT u.username as friend
         FROM users u
         JOIN friendships f ON f.user_id2 = u.user_id
-        WHERE f.user_id1 = $1;`,
+        WHERE f.user_id1 = $1`,
         [user_id]
     )
 }
@@ -177,4 +184,15 @@ exports.deleteFriendsRequests = async function(user_id1, user_id2){
     }finally{
         client.release();
     }
+}
+
+/*---------SEARCH USERS BY PREFIX------- */
+
+exports.searchUsers = async function(prefix){
+    return pool.query(
+    `SELECT u.username
+    FROM users u
+    WHERE u.username ILIKE $1
+    ORDER BY u.username`,
+    [prefix + '%'])
 }

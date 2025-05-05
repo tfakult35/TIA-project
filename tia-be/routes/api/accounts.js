@@ -1,11 +1,44 @@
 const express = require('express');
+const sanitizeHtml = require('sanitize-html');
 
 var router = express.Router();
 
 const { getFriends, getUser, getUserById, getFriendsRequests, 
         createFriendsRequests, checkFriendship, acceptFriendsRequests, 
-        getAllFriendsRequests, deleteFriendsRequests, deleteFriendship} = require('../../models/usersModel');
+        getAllFriendsRequests, deleteFriendsRequests, deleteFriendship,
+        updateUserDesc,
+        searchUsers} = require('../../models/usersModel');
 const {determineLogInJWT} = require('../../utils/authHelp')
+
+
+//--------------POST bio, your own--------------
+router.post("/bio/",determineLogInJWT,async (req,res)=>{
+    const token_id = req.user;
+
+
+    const unsanitizedContent = req.body.content; //sanitize html middleware
+    if(!unsanitizedContent){
+        return res.status(404).send("Missing content");
+    }
+        //sanitize html
+    const sanitizedContent = sanitizeHtml(unsanitizedContent);
+    
+    if(token_id === null){
+        return res.status(401).send("Invalid login")
+    }
+
+    try{
+        await updateUserDesc(token_id,sanitizedContent);
+        return res.sendStatus(200);
+    }catch(e){
+        return res.sendStatus(500);
+    }
+    
+
+
+})
+
+
 
 
 
@@ -48,7 +81,7 @@ router.get("/desc/", determineLogInJWT, async (req,res) => {
 })
 
 
-// -------- CHECK FRIENDSHIP 0 - not friends, 1 friends, 2 request pending (req = token_id), token_id, username --------
+// -------- CHECK FRIENDSHIP 0 - not friends, 1 friends, 2 request pending (req = token_id), 3 YOUR ACCOUNT, token_id, username --------
 
 router.get('/friends/:username', determineLogInJWT, async(req,res)=>{
    const token_id = req.user;
@@ -57,6 +90,8 @@ router.get('/friends/:username', determineLogInJWT, async(req,res)=>{
         return res.status(400).send("Invalid login")
    }
 
+   
+
    try{
         const getUserResult = await getUser(username);
         if(getUserResult.rowCount === 0){
@@ -64,6 +99,7 @@ router.get('/friends/:username', determineLogInJWT, async(req,res)=>{
         }
 
         const target_id = getUserResult.rows[0].user_id;
+        if(token_id === target_id) return res.status(200).json({"isFriend":3});
 
         const checkFriendshipResult = await checkFriendship(token_id,target_id);
         const getFriendsRequestsResult = await getFriendsRequests(token_id, target_id); 
@@ -244,8 +280,22 @@ router.get('/friends_requests',determineLogInJWT, async (req,res)=>{
 });
 
 
+/*****SEARCH USERS BY PREFIX *****/
+router.get('/search/:prefix', async (req,res)=>{
+    const prefix = req.params.prefix;
 
+    if(prefix === undefined) return res.status(404).send("Missing content")
+    
+    try{
+        const searchUsersResult = await searchUsers(prefix);
+        console.log(searchUsersResult);
+        return res.status(200).json(searchUsersResult.rows);
 
+    }catch (e){
+        console.log(e);
+        return res.status(500).send("Database error")
+    }
+})
 
 
 

@@ -41,8 +41,13 @@ const TextEditor: React.FC<TextEditorProps> = ({ currentFile, setCurrentFile, fi
   const handleSave = async () => {
     
     if(editor && currentFile !== null){
-      await setContent(currentFile,editor.getHTML());
-      fileNoteTree.getFileNote(currentFile).modified_time = new Date().toString();
+      try{
+        await setContent(currentFile,editor.getHTML());
+        fileNoteTree.getFileNote(currentFile).modified_time = new Date().toString();
+      }catch (e:any){
+        toast.error(e.message);
+      }
+
     }
     
     console.log("saved");

@@ -75,7 +75,7 @@ async function getFriendReqs(){
     return result;
 }
 
-async function checkFriendship(username:string){ //1 friends, 0 not friends, 2 req pending
+async function checkFriendship(username:string){ //1 friends, 0 not friends, 2 req pending, 3 your account
     const response = await fetch(`/api/accounts/friends/${username}`, {
         method: "GET",
         headers: {
@@ -140,5 +140,46 @@ async function deleteFriend(username:string){
     }
 }
 
+async function setBio(content:string){
+    const response = await fetch(`/api/accounts/bio`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",  
+            "Authorization": localStorage.getItem("token") || "",
+            
+        },
+        body: JSON.stringify({ "content": content })
+    })
 
-export {getUserDesc, getFriends, getFriendReqs,checkFriendship, addFriend, deleteFriend}
+    if(!response.ok){ //FINISH THIS
+        if (response.status >= 500) {
+            throw new Error("API error");
+        } else {
+            throw new Error("Invalid credentials");
+        }
+    }
+
+    return response;
+}
+
+async function searchAccounts(prefix:string){
+    const response = await fetch(`/api/accounts/search/${prefix}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",  
+        },
+    })
+
+    if(!response.ok){
+        const errorm = await response.text();
+        throw new Error(errorm);
+    }
+
+    const result = await response.json();
+    return result;
+}
+
+
+export {getUserDesc, getFriends, getFriendReqs,
+        checkFriendship, addFriend, deleteFriend, 
+        setBio, searchAccounts}
