@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { searchAccounts } from "../services/accountService";
+import { searchGroups } from "../services/groupService";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
@@ -8,20 +9,34 @@ const SearchPage: React.FC = () => {
 
     const [searchInput, setSearchInput] = useState('');
     const [searchResult, setSearchResult] = useState<Array<String>|undefined>(undefined);
+    const [searchWhat, setSearchWhat] = useState<number>(0);
 
     const handleSearch = async () =>{
-        try{        //TODO: set search result as result of searchaccount
+        try{        
             if(searchInput.replace(' ','')===''){
                 toast.error("The search bar is empty.");
                 return;
             }
-            const result = await searchAccounts(searchInput);
-            const stringResult = result.map((x:any)=>(x.username));
+
+            var stringResult;
+            if(searchWhat===0){
+                const result = await searchAccounts(searchInput);
+                stringResult = result.map((x:any)=>(x.username));
+                
+            }else{
+                const result = await searchGroups(searchInput);    //TODO FIX LINKS
+                stringResult = result.map((x:any)=>(x.group_name));
+            }
             setSearchResult([...stringResult]);
-            
         }catch (e:any){
             toast.error(e.message);
         }
+    }
+
+    const handleSearchWhat = (e: React.ChangeEvent<HTMLInputElement>) =>{
+        setSearchResult(undefined);
+        const value = parseInt(e.target.value);
+        setSearchWhat(value);
     }
 
     return(
@@ -31,19 +46,25 @@ const SearchPage: React.FC = () => {
                 <h2>Search for an account</h2>
                 <input value={searchInput} onChange={(e) => setSearchInput(e.target.value)}></input>          
                 <button onClick ={handleSearch}>SEARCH</button>
+                <label><input type="radio" name="access" value={0} onChange={handleSearchWhat} checked={searchWhat===0} /> Accounts</label>
+                <label><input type="radio" name="access" value={1} onChange={handleSearchWhat} checked={searchWhat===1} /> Groups</label><br />
+
             </div>
             <div>
                 
                 {searchResult !== undefined && (
                     <ul>
                         {   searchResult.length > 0 ? (
-                            searchResult.map((user,index)=>(
+                            searchResult.map((x,index)=>(
                                 <li key={index}>
-                                    <Link to={`/account/${user}`}> {user} </Link>
+                                    {!searchWhat ? 
+                                    (<Link to={`/account/${x}`}> {x} </Link>)
+                                    : 
+                                    (<Link to={`/groups/${x}`}> {x} </Link>)}
                                 </li>
                             ))
-                        )  : (
-                            <>No user found</>
+                        ) : (
+                            <>Zero results</>
                         )
                         }      
                     </ul>

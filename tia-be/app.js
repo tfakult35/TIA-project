@@ -9,6 +9,7 @@ var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/api/login');
 var fileRouter  = require('./routes/api/files');
 var accountsRouter = require('./routes/api/accounts')
+var groupsRouter = require('./routes/api/groups')
 //-------
 
 console.log("in be now");
@@ -26,7 +27,8 @@ app.use('/users', usersRouter);
 
 app.use('/api/login', loginRouter);
 app.use('/api/files', fileRouter);
-app.use('/api/accounts',accountsRouter)
+app.use('/api/accounts',accountsRouter);
+app.use('/api/groups', groupsRouter);
 
 app.listen(3001);
 module.exports = app;

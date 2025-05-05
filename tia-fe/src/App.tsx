@@ -13,7 +13,8 @@ import AccountPage from './pages/AccountPage'
 import FilesPage from './pages/FilesPage'
 import MyAccountPage from './pages/MyAccountPage'
 import SearchPage from './pages/SearchPage'
-
+import MyGroupPage from './pages/MyGroupPage'
+import GroupPage from './pages/GroupPage'
 
 
 
@@ -50,6 +51,8 @@ function App() {
         <Route path="/account/:username"  element ={<AccountPage isLoggedIn = {isLoggedIn} />}></Route>
         <Route path="/account"  element={<MyAccountPage isLoggedIn = {isLoggedIn} />}></Route>
         <Route path="/files/:username" element={<FilesPage/>}></Route>
+        <Route path="/groups/:group_name" element={<GroupPage isLoggedIn ={isLoggedIn}></GroupPage>} ></Route>
+        <Route path="/groups" element={<MyGroupPage isLoggedIn ={isLoggedIn}></MyGroupPage>} ></Route>
 
 
       </Routes>
