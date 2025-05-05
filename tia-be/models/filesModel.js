@@ -1,5 +1,23 @@
 var pool = require('../config/db.js')
 
+
+exports.getGroupFileHeaders = function(group_id){
+
+    return pool.query(
+        `
+        SELECT f.file_id, f.file_name, av.access_value, f.created_time, f.modified_time, f.topic, fh.file_id1 as parent_id, g.group_name
+        FROM files f
+        JOIN group_files gf ON f.file_id = gf.file_id
+        JOIN groups g ON gf.group_id = g.group_id
+        JOIN access_values av ON f.file_id = av.file_id
+        LEFT JOIN file_hierarchy fh ON f.file_id = fh.file_id2 
+        WHERE gf.group_id = $1 AND av.access_value = 2
+        
+        `,[group_id]
+
+    )
+}
+
 //------ RETURNS ALL user_id'S FILLES WITH APPROPRIATE AV (privl), AND THEIR PARENT FILES | null ------
 //------> DOESNT RETURN FILES WITH GROUP_ACCESS HERE UNLESS privl=5
 exports.getUserFileHeaders = function(user_id, privl){
@@ -128,5 +146,16 @@ exports.setPrivl = async function(file_id,privl){
     return pool.query(
         "UPDATE access_values SET access_value = $2 WHERE file_id = $1",
         [file_id, privl]
+    )
+}
+
+//--- for checking limit --- if parent has higher privl level- then not accept
+exports.privlCheck = async function(file_id,privl){
+    return pool.query(
+        `SELECT 1
+        FROM file_hierarchy fh
+        JOIN access_values av ON av.file_id = fh.file_id1
+        WHERE fh.file_id2 = $1 AND av.access_value > $2
+        `, [file_id,privl]
     )
 }

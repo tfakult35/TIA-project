@@ -140,6 +140,10 @@ async function deleteFriend(username:string){
     }
 }
 
+
+
+
+
 async function setBio(content:string){
     const response = await fetch(`/api/accounts/bio`, {
         method: "POST",
@@ -178,6 +182,9 @@ async function searchAccounts(prefix:string){
     const result = await response.json();
     return result;
 }
+
+
+
 
 
 export {getUserDesc, getFriends, getFriendReqs,

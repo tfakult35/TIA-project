@@ -3,7 +3,6 @@ import { buildFileNoteTree} from '../services/fileService';
 import FileNoteTree from '../classtypes/FileNoteTree';
 import DisplayAndFileStore from '../components/DisplayAndFileStore';
 import { useParams } from 'react-router-dom';
-import { getUserDesc } from '../services/accountService';
 import toast from "react-hot-toast"
 
 
@@ -28,10 +27,8 @@ const FilesPage: React.FC = () => {
         setReady(true);
         return;
       }
-
-      getUserDesc(username).then((result)=>{
-
-        buildFileNoteTree(result.user_id,"user")
+    
+      buildFileNoteTree(username,"user")
           .then((fnt) =>{
             console.log("built!");
             fileNoteTree.current = fnt;
@@ -39,7 +36,6 @@ const FilesPage: React.FC = () => {
             setReady(()=>true);
             setTriggerRender(v=>!v);
             return;
-          })
       }).catch((e)=>{username=undefined; toast.error(e.message); setReady(true);})
     },[])
 

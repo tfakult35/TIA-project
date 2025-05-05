@@ -6,7 +6,7 @@ var router = express.Router();
 const { getFriends, getUser, getUserById, getFriendsRequests, 
         createFriendsRequests, checkFriendship, acceptFriendsRequests, 
         getAllFriendsRequests, deleteFriendsRequests, deleteFriendship,
-        updateUserDesc,
+        updateUserDesc,getGroups,
         searchUsers} = require('../../models/usersModel');
 const {determineLogInJWT} = require('../../utils/authHelp')
 
@@ -243,7 +243,7 @@ router.delete('/friends/:username',determineLogInJWT, async (req,res)=>{
 router.get('/friends',determineLogInJWT, async (req,res)=>{
     const token_id = req.user;
     if(token_id === null){
-        return res.status(400).send("Log in is required");
+        return res.status(401).send("Log in is required");
     }
 
     try{
@@ -280,6 +280,26 @@ router.get('/friends_requests',determineLogInJWT, async (req,res)=>{
 });
 
 
+
+/*------- GET USER GROUPS--------- */
+router.get('/groups',determineLogInJWT, async (req,res)=>{
+    const token_id = req.user;
+    if(token_id === null){
+        return res.status(401).send("Log in is required");
+    }
+
+    try{
+        const result = await getGroups(token_id);
+        return res.status(200).json(result.rows);
+    }catch (e){
+        console.log(e);
+        return res.status(500).send("Database error");
+    }
+
+
+});
+
+
 /*****SEARCH USERS BY PREFIX *****/
 router.get('/search/:prefix', async (req,res)=>{
     const prefix = req.params.prefix;
@@ -288,7 +308,6 @@ router.get('/search/:prefix', async (req,res)=>{
     
     try{
         const searchUsersResult = await searchUsers(prefix);
-        console.log(searchUsersResult);
         return res.status(200).json(searchUsersResult.rows);
 
     }catch (e){

@@ -4,12 +4,12 @@ import FileNoteTree from "../classtypes/FileNoteTree";
 
 // null - own user files,
 // TODO: for the services I should just throw errors and catch them wherever I call them for consistency
-async function buildFileNoteTree(id:(number|null), from:string): Promise<FileNoteTree>{ //either from group or from user, then take the list of fileheaders, apply them
+async function buildFileNoteTree(name:string|null, from:string): Promise<FileNoteTree>{ //either from group or from user, then take the list of fileheaders, apply them
     
     try{
         var response;
-        if(id === null){
-            response = await fetch('/api/files/user/own', {
+        if(name === null){
+            response = await fetch('/api/files/user/', {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -18,15 +18,15 @@ async function buildFileNoteTree(id:(number|null), from:string): Promise<FileNot
             })
         }else{
             if(from === "user"){
-                response = await fetch(`/api/files/user/${id}`, {
+                response = await fetch(`/api/files/user/${name}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": localStorage.getItem("token") || ""
                     }
                 })
-            }else{ // if group
-                response = await fetch(`/api/files/group/${id}`, {
+            }else if (from === "group"){ // if group
+                response = await fetch(`/api/files/groups/${name}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -34,6 +34,8 @@ async function buildFileNoteTree(id:(number|null), from:string): Promise<FileNot
                     }
                     
                 })
+            }else{
+                throw new Error("Error calling build file note tree");
             }
         }
         if(!response.ok){
@@ -43,6 +45,7 @@ async function buildFileNoteTree(id:(number|null), from:string): Promise<FileNot
         const data = await response.json();
 
         const fileHeaders: FileNoteHeaderType[] = data;
+        console.log("FILEHEADERS:",fileHeaders)
 
         const hierarchyMap = new Map<Number,Number[]>();
         const idMap = new Map<Number,FileNoteHeaderType>();

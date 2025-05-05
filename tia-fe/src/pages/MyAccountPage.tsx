@@ -42,14 +42,14 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
                 const friendsArray = result.map((friendObj:any)=> (friendObj.friend));
                 setFriends(friendsArray); 
             })
-            .catch(() => console.log("Error")); //TODO: toaster
+            .catch(() => toast.error("Error getting friends")); //TODO: toaster
 
         getFriendReqs()
             .then((result)=>{
                 const friendReqsArray = result.map((friendReqObj:any)=> (friendReqObj.friend));
                 setFriendReqs(friendReqsArray);
             })
-            .catch(() => console.log("Error"));
+            .catch(() => toast.error("Error getting friend requests"));
     
         
     }, [editor,isLoggedIn]);

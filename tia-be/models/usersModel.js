@@ -196,3 +196,30 @@ exports.searchUsers = async function(prefix){
     ORDER BY u.username`,
     [prefix + '%'])
 }
+
+
+
+/*-----------GET GROUPS -------------*/
+exports.getGroups = async function(user_id){
+    return pool.query(
+        `SELECT g.group_name
+        FROM groups g
+        JOIN group_members gm ON g.group_id = gm.group_id
+        WHERE gm.user_id = $1
+        ORDER BY g.group_name`,
+        [user_id]
+    )
+    
+}
+
+
+/*------CHECK IF IN GROUP ------*/
+
+exports.groupCheck = async function(user_id,group_id){
+    return pool.query(
+        `SELECT 1
+        FROM group_members gm
+        WHERE gm.user_id = $1 AND gm.group_id =$2`,
+        [user_id,group_id]
+    )
+}

@@ -79,3 +79,11 @@ CREATE TABLE "public"."group_members"(
 
 )
 
+
+CREATE TABLE "public"."groups_requests" ( ------ delete this after update db definition
+    "user_id_req" INT NOT NULL,
+    "group_id_rec" INT NOT NULL,
+    PRIMARY KEY ("user_id_req", "group_id_rec"),
+    FOREIGN KEY ("user_id_req") REFERENCES "public"."users"("user_id") ON DELETE CASCADE, 
+    FOREIGN KEY ("group_id_rec") REFERENCES "public"."groups"("group_id") ON DELETE CASCADE,
+)

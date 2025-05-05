@@ -11,3 +11,12 @@ exports.searchGroups = async function(prefix){
     ORDER BY g.group_name`,
     [prefix + '%'])
 }
+
+exports.getGroup = async function(group_name){
+    return pool.query(
+    `SELECT *
+    FROM groups g
+    WHERE g.group_name = $1
+    `,
+    [group_name])
+}

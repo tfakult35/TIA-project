@@ -1,5 +1,6 @@
 const express = require('express');
 const {searchGroups} = require('../../models/groupModels');
+var {determineLogInJWT} = require('../../utils/authHelp');
 var router = express.Router();
 
 /*****SEARCH GROUPS BY PREFIX *****/
@@ -10,7 +11,6 @@ router.get('/search/:prefix', async (req,res)=>{
     
     try{
         const searchGroupResult = await searchGroups(prefix);
-        console.log(searchGroupResult);
         return res.status(200).json(searchGroupResult.rows);
 
     }catch (e){
@@ -18,6 +18,8 @@ router.get('/search/:prefix', async (req,res)=>{
         return res.status(500).send("Database error")
     }
 })
+
+
 
 
 module.exports = router;

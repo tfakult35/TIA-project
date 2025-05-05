@@ -4,15 +4,59 @@ const sanitizeHtml = require('sanitize-html');
 var router = express.Router();
 
 
-var {getUserFileHeaders,getFileOwner, getFileContent, createNewFile, setContent,removeFile,renameFile,setPrivl} = require('../../models/filesModel');
+var {getUserFileHeaders,getFileOwner, getFileContent, 
+    createNewFile, setContent,removeFile,renameFile,
+    setPrivl, privlCheck, getGroupFileHeaders} = require('../../models/filesModel');
 var {determineLogInJWT,getRelativePrivilege} = require('../../utils/authHelp');
-const { getUserGroups, getAmountOfNotes } = require('../../models/usersModel');
+const { getUserGroups, getAmountOfNotes, getUser, groupCheck } = require('../../models/usersModel');
+const { getGroup } = require('../../models/groupModels');
+
+
+
+// --------------- GROUP FILES --------------
+
+router.get("/groups/:group_name", determineLogInJWT, async(req,res)=>{
+    const token_id = req.user;
+    const group_name = req.params.group_name;
+
+    console.log("group name",group_name);
+    
+    
+    if(token_id === undefined){
+        return res.status(401).send("You are not logged in");
+    }
+
+    try{
+        const getGroupResult = await getGroup(group_name);
+        if(getGroupResult.rowCount === 0){
+            return res.status(404).send("No such group")
+        }
+
+        const group_id = getGroupResult.rows[0].group_id;
+        const groupCheckResult = await groupCheck(token_id,group_id);
+
+        if(groupCheckResult.rowCount === 0){
+            res.status(401).send("You do not have permission to view this group")
+        }
+
+        const filesResult = await getGroupFileHeaders(group_id);
+        return res.status(200).json(filesResult.rows);
+
+
+    }catch(e){
+        console.log(e);
+        return res.status(500).send("Database error");
+        
+    }
+    
+
+})
 
 
 //----- CREATE NEW BLANK FILE WITH file_name AND a_v = 5 OWNED BY USER -----
 router.post("/user/", determineLogInJWT, async(req,res)=>{
     const token_id = req.user;
-    if(!token_id){
+    if(token_id === undefined){
         return res.status(401).send("You are not logged in");
     }else{
         //check if not exceeded file amount limit (200 notes)
@@ -53,7 +97,7 @@ router.post("/user/", determineLogInJWT, async(req,res)=>{
 
 
 //------ GET OWN FILE HEADERS ------
-router.get("/user/own", determineLogInJWT, async(req,res) => {
+router.get("/user/", determineLogInJWT, async(req,res) => {
     const token_id = req.user;
     if(!token_id){
         console.log("NOT LOGGED IN");
@@ -71,13 +115,23 @@ router.get("/user/own", determineLogInJWT, async(req,res) => {
 })
 
 //------ GET user-id FILE HEADERS; access control ------
-router.get("/user/:user_id", determineLogInJWT, async (req,res)=>{
-    const target_id = parseInt(req.params.user_id);
+router.get("/user/:username", determineLogInJWT, async (req,res)=>{
+    const user = req.params.username;
     const token_id = req.user;
     
+
     try{
-        const privl = await getRelativePrivilege(token_id,target_id);
-        console.log(privl);
+
+        const getUserResult = await getUser(user)
+        if(getUserResult.rowCount === 0){
+            return res.status(404).send("No such user");
+        } 
+
+        const target_id = getUserResult.rows[0].user_id;
+        console.log("user_id",target_id)
+
+        const privl = await getRelativePrivilege(token_id,target_id); //doesnt check for GROUPS! must make seperate group get
+        console.log("privl",privl);
         const userFileResult = await getUserFileHeaders(target_id,privl);
         return res.status(200).json(userFileResult.rows);
 
@@ -107,7 +161,7 @@ router.get("/:file_id/content", determineLogInJWT, async (req, res) =>{
             let groups = [];
             if(token_id){
                 const groupsResult = await getUserGroups(token_id);
-                groups = groupsResult.rows.map(x => x.group.id);
+                groups = groupsResult.rows.map(x => x.group_id);
             }
 
             const getContentResult = await getFileContent(target_file_id,privl,groups);
@@ -225,11 +279,16 @@ router.post("/:file_id/access",determineLogInJWT, async(req,res) =>{
             }
 
             if(fileOwnerResult.rows[0].user_id !== token_id){
-                return res.status(403).send("You are not the owner of this file");
-            }else{
-                await setPrivl(target_file_id, privl);
-                return res.sendStatus(200);
+                return res.status(401).send("You are not the owner of this file");
             }
+
+            const privlCheckResult = await privlCheck(target_file_id,privl); //CHECK PRIVL
+            if(privlCheckResult.rowCount > 0){
+                return res.status(400).send("Parent privl higher than child privl");
+            }
+            await setPrivl(target_file_id, privl);
+            return res.sendStatus(200);
+            
         }catch (e){
             console.log(e);
             return res.sendStatus(500);
@@ -240,7 +299,6 @@ router.post("/:file_id/access",determineLogInJWT, async(req,res) =>{
 
 //DELETE file_id
 router.delete("/:file_id", determineLogInJWT, async (req,res) =>{
-    console.log("DELETEEE");
     token_id = req.user;
     const target_file_id = parseInt(req.params.file_id);
 
