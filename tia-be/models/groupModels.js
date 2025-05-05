@@ -20,3 +20,15 @@ exports.getGroup = async function(group_name){
     `,
     [group_name])
 }
+
+exports.getGroupMembers = async function(group_name){
+    return pool.query(
+        `SELECT u.username
+        FROM groups g
+        JOIN group_members gm ON g.group_id = gm.group_id
+        JOIN users u ON gm.user_id = u.user_id
+        WHERE g.group_name =$1
+        ORDER BY u.username
+        `,[group_name]
+    )
+}

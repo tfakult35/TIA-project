@@ -28,16 +28,24 @@ const getToken = (user_id) => {
 function determineLogInJWT(req,res,next){
     const token = req.headers["authorization"]; //header only includes token
     if(!token){
-        req.user = undefined;
+        req.user = null;
     }else{
 
         try {
             const tokenContent = jwt.verify(token, JWT_SECRET);
             req.user = tokenContent.user_id;
         } catch (err) {
-            req.user = undefined;
+            req.user = null;
         }
         
+    }
+    next();
+}
+
+function logInRequire(req,res,next){
+    console.log("req.user", req.user);
+    if(req.user === null || req.user === undefined){
+        return res.status(401).send("Invalid login");
     }
     next();
 }
@@ -59,4 +67,4 @@ async function getRelativePrivilege(token_id,target_id){
 }
 
 
-module.exports = { hashPassword, comparePassword, getToken, determineLogInJWT, getRelativePrivilege};
+module.exports = { hashPassword, comparePassword, getToken, determineLogInJWT, getRelativePrivilege, logInRequire};

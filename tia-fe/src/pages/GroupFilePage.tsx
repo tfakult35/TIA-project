@@ -40,7 +40,7 @@ const GroupFilePage: React.FC<GroupFilePageProps> = ({isLoggedIn}) => {
         }
 
         
-        buildFileNoteTree(group_name,"group") //build group file tree
+        buildFileNoteTree(group_name,"group") //build group file tree 
             .then((fnt) =>{
             console.log("built!");
             fileNoteTree.current = fnt;   
@@ -50,7 +50,7 @@ const GroupFilePage: React.FC<GroupFilePageProps> = ({isLoggedIn}) => {
             setTriggerRender(v=>!v);
             return;
             
-        }).catch((e:any)=>{console.log("oooh ooh"),group_name=undefined; toast.error(e.message); setReady(true);})
+        }).catch((e:any)=>{console.log("oooh ooh"),group_name=undefined; setPrivl(false); toast.error(e.message); setReady(true);}) ///FUNKY BUSINESS HERE
     },[])
 
     if(!isLoggedIn){

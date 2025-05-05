@@ -89,5 +89,26 @@ async function getGroupDesc(group_name:string){
     }
 }
 
+async function getGroupMembers(group_name:string){
+    const response = await fetch(`/api/groups/members/${group_name}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",  
+            "Authorization": localStorage.getItem("token") || "",
+        },
+    })
 
-export {searchGroups, getGroups,getGroupsReqs}
+    if(!response.ok){
+        if (response.status >= 500) {
+            throw new Error("API error");
+        } else {
+            throw new Error("Error!");
+        }
+    }
+
+    const result = await response.json();
+    return result;
+}
+
+
+export {searchGroups, getGroups,getGroupsReqs, getGroupMembers}

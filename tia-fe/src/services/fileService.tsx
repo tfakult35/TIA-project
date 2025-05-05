@@ -45,7 +45,6 @@ async function buildFileNoteTree(name:string|null, from:string): Promise<FileNot
         const data = await response.json();
 
         const fileHeaders: FileNoteHeaderType[] = data;
-        console.log("FILEHEADERS:",fileHeaders)
 
         const hierarchyMap = new Map<Number,Number[]>();
         const idMap = new Map<Number,FileNoteHeaderType>();

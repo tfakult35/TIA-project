@@ -7,7 +7,7 @@ var router = express.Router();
 var {getUserFileHeaders,getFileOwner, getFileContent, 
     createNewFile, setContent,removeFile,renameFile,
     setPrivl, privlCheck, getGroupFileHeaders} = require('../../models/filesModel');
-var {determineLogInJWT,getRelativePrivilege} = require('../../utils/authHelp');
+var {determineLogInJWT,getRelativePrivilege,logInRequire} = require('../../utils/authHelp');
 const { getUserGroups, getAmountOfNotes, getUser, groupCheck } = require('../../models/usersModel');
 const { getGroup } = require('../../models/groupModels');
 
@@ -15,17 +15,13 @@ const { getGroup } = require('../../models/groupModels');
 
 // --------------- GROUP FILES --------------
 
-router.get("/groups/:group_name", determineLogInJWT, async(req,res)=>{
+router.get("/groups/:group_name", determineLogInJWT, logInRequire, async(req,res)=>{
     const token_id = req.user;
     const group_name = req.params.group_name;
 
     console.log("group name",group_name);
     
     
-    if(token_id === undefined){
-        return res.status(401).send("You are not logged in");
-    }
-
     try{
         const getGroupResult = await getGroup(group_name);
         if(getGroupResult.rowCount === 0){
@@ -36,7 +32,7 @@ router.get("/groups/:group_name", determineLogInJWT, async(req,res)=>{
         const groupCheckResult = await groupCheck(token_id,group_id);
 
         if(groupCheckResult.rowCount === 0){
-            res.status(401).send("You do not have permission to view this group")
+            return res.status(401).send("You do not have permission to view this group");
         }
 
         const filesResult = await getGroupFileHeaders(group_id);
@@ -97,21 +93,18 @@ router.post("/user/", determineLogInJWT, async(req,res)=>{
 
 
 //------ GET OWN FILE HEADERS ------
-router.get("/user/", determineLogInJWT, async(req,res) => {
+router.get("/user/", determineLogInJWT, logInRequire,  async(req,res) => {
     const token_id = req.user;
-    if(!token_id){
-        console.log("NOT LOGGED IN");
-        return res.status(401).send("You are not logged in");
+    
+
+    try{
+        const userFileResult = await getUserFileHeaders(token_id,5);
+        return res.status(200).json(userFileResult.rows)
+    }catch (e){
+        console.log(e);
+        return res.sendStatus(500);
     }
-    else{
-        try{
-            const userFileResult = await getUserFileHeaders(token_id,5);
-            return res.status(200).json(userFileResult.rows)
-        }catch (e){
-            console.log(e);
-            return res.sendStatus(500);
-        }
-    }
+
 })
 
 //------ GET user-id FILE HEADERS; access control ------
@@ -185,7 +178,7 @@ router.get("/:file_id/content", determineLogInJWT, async (req, res) =>{
 
 
 //------ SET THE CONTENT OF file_id, only owner of file; access control ------
-router.post('/:file_id/content',determineLogInJWT, async(req,res)=>{
+router.post('/:file_id/content',determineLogInJWT,logInRequire, async(req,res)=>{
     console.log("IN SET CONTENT api");
     const target_file_id = parseInt(req.params.file_id);
     const token_id = req.user;
@@ -196,30 +189,28 @@ router.post('/:file_id/content',determineLogInJWT, async(req,res)=>{
     //sanitize html
     const sanitizedContent = sanitizeHtml(unsanitizedContent);
 
-    if(!token_id){
-        return res.status(401).send("You are not logged in");
-    }else{
-        try{
-            fileOwnerResult = await getFileOwner(target_file_id);
-            if(fileOwnerResult.rowCount === 0){
-                res.status(404).send("No such file");
-            }
-
-            if(fileOwnerResult.rows[0].user_id !== token_id){
-                return res.status(403).send("You are not the owner of this file");
-            }else{
-                await setContent(target_file_id, sanitizedContent);
-                return res.sendStatus(200);
-            }
-        }catch{
-            return res.sendStatus(500);
+    
+    try{
+        fileOwnerResult = await getFileOwner(target_file_id);
+        if(fileOwnerResult.rowCount === 0){
+            res.status(404).send("No such file");
         }
+
+        if(fileOwnerResult.rows[0].user_id !== token_id){
+            return res.status(403).send("You are not the owner of this file");
+        }else{
+            await setContent(target_file_id, sanitizedContent);
+            return res.sendStatus(200);
+        }
+    }catch{
+        return res.sendStatus(500);
     }
+    
 
 })
 
 //RENAME file_id
-router.post("/:file_id/name",determineLogInJWT, async(req,res) =>{
+router.post("/:file_id/name",determineLogInJWT, logInRequire, async(req,res) =>{
 
     const token_id = req.user;
     const file_name = req.body.file_name;
@@ -232,10 +223,6 @@ router.post("/:file_id/name",determineLogInJWT, async(req,res) =>{
     const cleanName = file_name.replace(/[^a-zA-Z0-9]/g, '');
     if(file_name !== cleanName){
         return res.status(400).send("Bad characters");
-    }
-
-    if(!token_id){
-        return res.sendStatus(400);
     }
 
     try{
@@ -257,7 +244,7 @@ router.post("/:file_id/name",determineLogInJWT, async(req,res) =>{
 })
 
 //CHANGE ACCESS CONTROL file_id
-router.post("/:file_id/access",determineLogInJWT, async(req,res) =>{
+router.post("/:file_id/access",determineLogInJWT, logInRequire, async(req,res) =>{
 
     console.log("IN access CONTENT api");
 
@@ -269,43 +256,38 @@ router.post("/:file_id/access",determineLogInJWT, async(req,res) =>{
         return res.status(400).send("Invalid privl")
     }
 
-    if(!token_id){
-        return res.status(401).send("You are not logged in");
-    }else{
-        try{
-            fileOwnerResult = await getFileOwner(target_file_id);
-            if(fileOwnerResult.rowCount === 0){
-                res.status(404).send("No such file");
-            }
-
-            if(fileOwnerResult.rows[0].user_id !== token_id){
-                return res.status(401).send("You are not the owner of this file");
-            }
-
-            const privlCheckResult = await privlCheck(target_file_id,privl); //CHECK PRIVL
-            if(privlCheckResult.rowCount > 0){
-                return res.status(400).send("Parent privl higher than child privl");
-            }
-            await setPrivl(target_file_id, privl);
-            return res.sendStatus(200);
-            
-        }catch (e){
-            console.log(e);
-            return res.sendStatus(500);
+    
+    try{
+        fileOwnerResult = await getFileOwner(target_file_id);
+        if(fileOwnerResult.rowCount === 0){
+            res.status(404).send("No such file");
         }
+
+        if(fileOwnerResult.rows[0].user_id !== token_id){
+            return res.status(401).send("You are not the owner of this file");
+        }
+
+        const privlCheckResult = await privlCheck(target_file_id,privl); //CHECK PRIVL
+        if(privlCheckResult.rowCount > 0){
+            return res.status(400).send("Parent privl higher than child privl");
+        }
+        await setPrivl(target_file_id, privl);
+        return res.sendStatus(200);
+        
+    }catch (e){
+        console.log(e);
+        return res.sendStatus(500);
     }
+    
 
 })
 
 //DELETE file_id
-router.delete("/:file_id", determineLogInJWT, async (req,res) =>{
+router.delete("/:file_id", determineLogInJWT, logInRequire, async (req,res) =>{
     token_id = req.user;
     const target_file_id = parseInt(req.params.file_id);
 
-    if(!token_id){
-        return res.sendStatus(400);
-    }
-
+   
     try{
         fileOwnerResult = await getFileOwner(target_file_id);
         if(fileOwnerResult.rowCount === 0){
