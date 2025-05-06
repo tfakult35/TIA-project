@@ -12,7 +12,7 @@ exports.getGroupFileHeaders = function(group_id){
         JOIN access_values av ON f.file_id = av.file_id
         LEFT JOIN file_hierarchy fh ON f.file_id = fh.file_id2 
         WHERE gf.group_id = $1 AND av.access_value = 2
-        
+        ORDER BY f.file_name
         `,[group_id]
 
     )

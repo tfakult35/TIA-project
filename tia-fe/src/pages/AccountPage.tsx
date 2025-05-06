@@ -112,7 +112,7 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
             if(currUsername === undefined){return};
             await inviteToGroup(group_name, currUsername);
         }catch(e:any){
-            toast.error(e.message);
+            toast.error("Error");
         }
         setMenuVisible(false);
     }
