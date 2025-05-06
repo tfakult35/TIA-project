@@ -36,6 +36,7 @@ router.get("/groups/:group_name", determineLogInJWT, logInRequire, async(req,res
         }
 
         const filesResult = await getGroupFileHeaders(group_id);
+        console.log("groupfiles",filesResult.rows);
         return res.status(200).json(filesResult.rows);
 
 

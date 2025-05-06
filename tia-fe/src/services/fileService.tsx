@@ -46,6 +46,14 @@ async function buildFileNoteTree(name:string|null, from:string): Promise<FileNot
 
         const fileHeaders: FileNoteHeaderType[] = data;
 
+        //so group view doesnt screw up
+        const existingIds = new Set(fileHeaders.map(fh => fh.file_id));
+        for (const fileHeader of fileHeaders) {
+        if (fileHeader.parent_id !== null && !existingIds.has(fileHeader.parent_id)) {
+            fileHeader.parent_id = null;
+        }
+        }
+
         const hierarchyMap = new Map<Number,Number[]>();
         const idMap = new Map<Number,FileNoteHeaderType>();
         for(const fileHeader of fileHeaders){
