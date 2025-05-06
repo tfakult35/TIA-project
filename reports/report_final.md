@@ -1,8 +1,8 @@
 # Info o projekte:
 - Meno a priezvisko: Jakub Tarhovicky
 - Názov projektu: NotesHare
-- Link na repozitár:                  <!-- Link na Váš GitHub repozitár -->
-- Link na verejnú inštanciu projektu: <!-- Link na verejný hosting, kde je Váš projekt dostupný -->
+- Link na repozitár:  https://github.com/tfakult35/TIA-project                <!-- Link na Váš GitHub repozitár -->
+- Link na verejnú inštanciu projektu: https://notesharefe.onrender.com <!-- Link na verejný hosting, kde je Váš projekt dostupný -->
 
 # Info o reportovanej verzii:
 - Tag: final    <!-- Uviesť final_cisloSubverzie, ak ste robili vo finálnej verzii zmeny pred termínom odovzdania -->
@@ -39,7 +39,6 @@ Zo špecifikácie som z implementácie vynechal:
 - Celkovo by som na vec išiel viac systematicky, väčšinou som veci robil zabehu: napr. pomenovanie premenných/routov, rendering, css design, errory, logické rozdelenie funkcií a routov v priečinkoch atď. 
 
 <!-- Ste hrdý na výsledky svojej práce? Ktorý aspekt projektu je podľa Vás najviac kvalitný? -->
-
 - Najlepšia časť môjho projektu je asi frontend pre manipulaciu a zobrazovanie súborov a jeho integrácia s backendom.
 
 
