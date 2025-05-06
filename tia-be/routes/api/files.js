@@ -313,4 +313,39 @@ router.delete("/:file_id", determineLogInJWT, logInRequire, async (req,res) =>{
 })
 
 
+//CHANGE GROUP MEMBERSHIP
+router.post("/:file_id/group", determineLogInJWT, logInRequire, async(req,res)=>{
+
+    token_id = req.user;
+    const target_file_id = parseInt(req.params.file_id);
+    const group_name = req.body.group_name;
+
+    if(!group_name || group_name === ""){
+        res.status(400).send("Invalid group name");
+    }
+
+    try{
+        fileOwnerResult = await getFileOwner(target_file_id);
+        if(fileOwnerResult.rowCount === 0){
+            res.status(404).send("No such file");
+        }
+
+        if(fileOwnerResult.rows[0].user_id !== token_id){
+            return res.status(401).send("You are not the owner of this file");
+        }
+
+        
+
+        //CHECK IF ROOT FILE, RECURSIVELY UPDATE GROUP MEMBERSHIP OF ROOT AND ALL OF ITS DESCENDANTS
+        
+        return res.sendStatus(200);
+        
+    }catch (e){
+        console.log(e);
+        return res.sendStatus(500);
+    }
+
+
+})
+
 module.exports = router;

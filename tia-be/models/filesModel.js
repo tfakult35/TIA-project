@@ -64,7 +64,7 @@ exports.getFileContent = function(file_id, privl, groups){
 exports.createNewFile = async function(user_id,file_name, parent_file_id){
     const client = await pool.connect();
     try{
-        client.query('BEGIN');
+        await client.query('BEGIN');
 
         const insertFileResult = await client.query(
             `INSERT INTO files (file_name, modified_time, topic, content)
@@ -74,6 +74,7 @@ exports.createNewFile = async function(user_id,file_name, parent_file_id){
         )
 
         const file_id = insertFileResult.rows[0].file_id;
+        var group_name = null;
 
         await client.query(
             `INSERT INTO user_files (user_id, file_id)
@@ -93,10 +94,34 @@ exports.createNewFile = async function(user_id,file_name, parent_file_id){
                 VALUES ($1,$2)`,
                 [parent_file_id,file_id]
             )
+
+            const groupResult = await client.query(
+                `SELECT g.group_id, g.group_name
+                FROM group_files gf 
+                JOIN groups g ON g.group_id = gf.group_id
+                WHERE gf.file_id = $1`,
+                [parent_file_id]
+            )
+
+            if(groupResult.rowCount > 0){
+                const group_id = groupResult.rows[0].group_id;
+                group_name = groupResult.rows[0].group_name;
+
+                await client.query(
+                    `INSERT INTO group_files (group_id,file_id)
+                    VALUES ($1,$2)`,
+                    [group_id,file_id]
+                )
+            }
+            
         }
 
         await client.query('COMMIT');
-        return insertFileResult.rows[0];
+        return {
+            file_id,
+            modified_time: insertFileResult.rows[0].modified_time,
+            group_name
+        };
 
 
     }catch(e){

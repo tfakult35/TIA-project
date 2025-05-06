@@ -50,7 +50,7 @@ class FileNoteTree{
                 modified_time: result.modified_time,
                 topic: "",
                 parent_id: parent_file_id,
-                group_name: null
+                group_name: result.group_name === null ? "" : result.group_name
               };
             this.idMap.set(result.file_id, fileNoteHeader);
             this.hierarchyMap.set(result.file_id, []);
@@ -106,7 +106,7 @@ class FileNoteTree{
     }
 
     //TODO redo so it gives error instead of changes children, have to do in backend aswell
-    //-----------SET ACCESS CONTROL, ALL CHILDREN WITH LOWER ACCESS VAL CHANGE TOO-------
+    //-----------SET ACCESS CONTROL-------
     public async setAccessControl(id:Number, privl:number){
         if(!this.idMap.get(id) ) return;
         //must change if parent is higher privl then you cant change
@@ -163,6 +163,12 @@ class FileNoteTree{
             return;
         }
 
+        try{
+            await changeGroupMembership(id,group_name);
+        }catch (e){
+            throw e;
+        }
+
         const groupNameRec = (currentId:Number) =>{
             const fileNote = this.idMap.get(currentId);
             if(!fileNote) return;
@@ -178,7 +184,7 @@ class FileNoteTree{
         }
 
         groupNameRec(id);
-        await changeGroupMembership(id,group_name);
+        
     }
 
     //---------------------------------------------

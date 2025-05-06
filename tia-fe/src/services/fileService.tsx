@@ -201,7 +201,24 @@ async function changeAccessControl(file_id:Number,privl:number){
 }
 
 async function changeGroupMembership(file_id:Number, group_name:string){
+    const response = await fetch(`/api/files/${file_id}/group`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem("token") || "", 
+        },
+        body: JSON.stringify({ "group_name": group_name })
+    });
 
+    if(!response.ok){ //FINISH THIS
+        if (response.status >= 500) {
+            throw new Error("API error");
+        } else {
+            throw new Error("ERROR changeGroupMembership");
+        }
+    }
+
+    return response;
 }
 export{buildFileNoteTree, getFileContent, createFileNote,
     setContent,deleteFileNote,rename,changeAccessControl, changeGroupMembership};
