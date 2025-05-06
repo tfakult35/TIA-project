@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getGroups, getGroupsReqs } from "../services/groupService";
+import { getGroups, getGroupsReqs, createNewGroup } from "../services/groupService";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -11,6 +11,9 @@ const MyGroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
 
     const [groups,setGroups] = useState<string[]>([]);
     const [groupReqs,setGroupReqs] = useState<string[]>([]);
+    const [nameInput,setNameInput] = useState<boolean>(false);
+    const [newName, setNewName] = useState<string>("");
+
    
     useEffect( () => {
         
@@ -40,12 +43,32 @@ const MyGroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
     } 
 
 
+    const handleCreateNewGroup = ()=>{
+        setNameInput(true);
+    }
+
+    const submitName = async()=>{
+        const cleanedName = newName.replace(/[^a-zA-Z0-9]/g, '');
+         if(cleanedName.trim() === '') return;
+
+        try{
+            await createNewGroup(cleanedName);
+            setGroups([...groups,cleanedName])
+
+        }catch (e:any){
+            toast.error(e.message); return;
+        }
+        
+        setNameInput(false);
+    }
+
+
     return(
 
-        <div className="account-page">
+        <div className="page1">
 
             <h2>My groups</h2>
-            <div>
+            <div className="listing1">
             <ul>
                 {(groups.length === 0) && (
                     <li>You not in a group.</li>)}
@@ -54,8 +77,26 @@ const MyGroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
                         <Link to={`/groups/${grp}`}> { grp } </Link>
                     </li> 
                 ))}
-            </ul>                
+            </ul>
             </div>
+            <button onClick ={handleCreateNewGroup}>Create new group</button>
+            {nameInput && (
+                <div>
+                    <input
+                        type="text"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            submitName();
+                        } else if (e.key === 'Escape') {
+                            setNameInput(false);
+                        }
+                        }}
+                        autoFocus
+                    />
+                </div>) }
 
             <h2>Group requests</h2>
             <div>

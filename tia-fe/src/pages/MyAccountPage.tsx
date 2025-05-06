@@ -99,14 +99,14 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
         )
     }else{
         return(
-            <div className="account-page">
+            <div className="page1">
 
                 <div className='container'>
 
                     <div className='row'>
                         <div className='col-sm-6'>
                         <h2>Your Friends</h2>
-                        <div className="friendslist">
+                        <div className="listing1">
                                 
                                 <ul>
                                 {(friends.length === 0) && (
@@ -124,7 +124,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
                         <div className='col-sm-6'>
 
                         <h2>Friend requests</h2>
-                        <div className="friendslist">
+                        <div className="listing1">
                                 
                                 <ul>
                                 {(friendReqs.length === 0) &&  

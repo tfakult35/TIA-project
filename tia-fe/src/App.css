@@ -59,7 +59,7 @@ button:active{
 }
 
 /*--------------ACCOUNT PAGE----------------*/
-.account-page {
+.page1 {
   background-color: #2f2f2f;
   color: white;
   width: 80%;
@@ -119,9 +119,9 @@ button:active{
 }
 
 
-/*------------FRIENDSLIST----------------*/
+/*------------LISTING----------------*/
 
-.friendslist {
+.listing1 {
   background-color:#383838;
   max-height: 8em;
   height:8em;
@@ -131,12 +131,13 @@ button:active{
   overflow-y: auto;
   overflow-x: auto;
 
+  width: 15em;
 
 
 
 }
 
-.friendslist ul{
+.listing1 ul{
   list-style-type: none;
 
 }

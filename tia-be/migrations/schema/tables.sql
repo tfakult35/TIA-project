@@ -25,7 +25,7 @@ CREATE TABLE "public"."friends_requests" (
 
 CREATE TABLE "public"."groups" (
     "group_id" SERIAL PRIMARY KEY,
-    "group_name" varchar(100) NOT NULL,
+    "group_name" varchar(100) NOT NULL UNIQUE,
     "group_desc" varchar(1000) NOT NULL
 );
 

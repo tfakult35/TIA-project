@@ -32,3 +32,33 @@ exports.getGroupMembers = async function(group_name){
         `,[group_name]
     )
 }
+
+exports.createGroup = async function(user_id,group_name){
+
+    const client = await pool.connect();
+
+    try{
+        await client.query('BEGIN');
+
+        const insertGroupResult = await client.query(
+            `INSERT INTO groups (group_name, group_desc)
+            VALUES ($1, '')
+            RETURNING group_id`,
+            [group_name]
+        )
+
+        const group_id = insertGroupResult.rows[0].group_id;
+
+        await client.query(
+            `INSERT INTO group_members (group_id, user_id)
+            VALUES ($1, $2)`,
+        [group_id, user_id]);
+    
+        await client.query('COMMIT');
+
+    }catch (e){
+        await client.query('ROLLBACK');
+    }finally{
+        client.release();
+    }
+}

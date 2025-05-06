@@ -1,9 +1,28 @@
 const express = require('express');
-const {searchGroups, getGroupMembers,getGroup} = require('../../models/groupModels');
+const {searchGroups, getGroupMembers,getGroup, createGroup} = require('../../models/groupModels');
 const {groupCheck} = require('../../models/usersModel')
 const {determineLogInJWT,logInRequire} = require('../../utils/authHelp');
 
 var router = express.Router('../../utils/usersModel');
+
+/****CREATE NEW GROUP *****/
+
+router.post('/', determineLogInJWT, logInRequire, async (req,res)=>{
+    const token_id = req.user;
+    const group_name = req.body["group_name"];
+    
+    if(!group_name){
+        return res.status(400).send("Invalid group name")
+    }
+
+    try{
+        await createGroup(token_id,group_name);
+        return res.status(200).end();
+    }catch (e){
+        return res.status(500).send("API error");
+    }
+
+})
 
 /*****SEARCH GROUPS BY PREFIX *****/
 router.get('/search/:prefix', async (req,res)=>{

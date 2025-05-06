@@ -64,16 +64,17 @@ const GroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
     
     return(
 
-        <div>
+        <div className='page1'>
 
             <h2>{group_name}</h2>
+            <br/>
 
 
             {(groupMembers.length !== 0) && (
                 <>
                 <Link to={`/groups/${group_name}/files`}> FILES </Link>
                 <h2>Group members</h2>
-                <div>
+                <div className='listing1'>
                     <ul>
                         {groupMembers.map((member,index)=>(<li key={index}> <Link to={`/account/${member}`}> {member } </Link> </li>))}
                     </ul>
