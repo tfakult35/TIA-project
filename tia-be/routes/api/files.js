@@ -6,7 +6,7 @@ var router = express.Router();
 
 var {getUserFileHeaders,getFileOwner, getFileContent, 
     createNewFile, setContent,removeFile,renameFile,
-    setPrivl, privlCheck, getGroupFileHeaders, childPrivlCheck} = require('../../models/filesModel');
+    setPrivl, privlCheck, getGroupFileHeaders, childPrivlCheck, checkIfRootNote, removeGroupFromFile,changeGroupForFile} = require('../../models/filesModel');
 var {determineLogInJWT,getRelativePrivilege,logInRequire} = require('../../utils/authHelp');
 const { getUserGroups, getAmountOfNotes, getUser, groupCheck } = require('../../models/usersModel');
 const { getGroup } = require('../../models/groupModels');
@@ -60,12 +60,12 @@ router.post("/user/", determineLogInJWT, async(req,res)=>{
             const result = await getAmountOfNotes(token_id);
             console.log(result.rows[0].file_count);
             if(result.rows[0].file_count > 199){
-                res.status(400).end();
+                return res.status(400).end();
             }
 
         }catch (e){
             console.log(e);
-            res.status(500).end();
+            return res.status(500).end();
         }
 
         //check if parent_file_id are viable
@@ -84,7 +84,7 @@ router.post("/user/", determineLogInJWT, async(req,res)=>{
         }
         catch (e){
             console.log(e);
-            res.status(500).send(e); 
+            return res.status(500).send(e); 
         }
     }
 
@@ -161,17 +161,17 @@ router.get("/:file_id/content", determineLogInJWT, async (req, res) =>{
             
             if(getContentResult.rowCount === 0){
                 console.log("Privl fault");
-                res.status(403).send("Privl fault");
+                return res.status(403).send("Privl fault");
             }else{
                 const content = getContentResult.rows[0].content;
-                res.status(200).json(content);
+                return res.status(200).json(content);
             }
 
         }
     }
     catch (e){
         console.log(e);
-        res.sendStatus(500);
+        return res.sendStatus(500);
     }
 
 });
@@ -193,7 +193,7 @@ router.post('/:file_id/content',determineLogInJWT,logInRequire, async(req,res)=>
     try{
         fileOwnerResult = await getFileOwner(target_file_id);
         if(fileOwnerResult.rowCount === 0){
-            res.status(404).send("No such file");
+            return res.status(404).send("No such file");
         }
 
         if(fileOwnerResult.rows[0].user_id !== token_id){
@@ -260,7 +260,7 @@ router.post("/:file_id/access",determineLogInJWT, logInRequire, async(req,res) =
     try{
         fileOwnerResult = await getFileOwner(target_file_id);
         if(fileOwnerResult.rowCount === 0){
-            res.status(404).send("No such file");
+            return res.status(404).send("No such file");
         }
 
         if(fileOwnerResult.rows[0].user_id !== token_id){
@@ -297,7 +297,7 @@ router.delete("/:file_id", determineLogInJWT, logInRequire, async (req,res) =>{
     try{
         fileOwnerResult = await getFileOwner(target_file_id);
         if(fileOwnerResult.rowCount === 0){
-            res.status(404).send("No such file");
+            return res.status(404).send("No such file");
         }
 
         if(fileOwnerResult.rows[0].user_id !== token_id){
@@ -313,30 +313,62 @@ router.delete("/:file_id", determineLogInJWT, logInRequire, async (req,res) =>{
 })
 
 
-//CHANGE GROUP MEMBERSHIP
+//CHANGE ROOT GROUP MEMBERSHIP
 router.post("/:file_id/group", determineLogInJWT, logInRequire, async(req,res)=>{
 
-    token_id = req.user;
+    const token_id = req.user;
     const target_file_id = parseInt(req.params.file_id);
     const group_name = req.body.group_name;
 
-    if(!group_name || group_name === ""){
-        res.status(400).send("Invalid group name");
+
+    if(group_name === undefined || group_name === ""){
+        return res.status(404).send("Invalid group name");
     }
 
     try{
-        fileOwnerResult = await getFileOwner(target_file_id);
+        const fileOwnerResult = await getFileOwner(target_file_id);
         if(fileOwnerResult.rowCount === 0){
-            res.status(404).send("No such file");
+            return res.status(404).send("No such file");
         }
 
         if(fileOwnerResult.rows[0].user_id !== token_id){
             return res.status(401).send("You are not the owner of this file");
         }
+        //CHECK IF ROOT FILE, RECURSIVELY UPDATE GROUP MEMBERSHIP OF ROOT AND ALL OF ITS DESCENDANTS
+
+        const rootNoteResult = await checkIfRootNote(target_file_id);
+
+        if(rootNoteResult.rowCount >0 ){
+            return res.status(400).send("Not a root note file");
+        }
 
         
+        //IF REMOVING GROUP group_name === null
 
-        //CHECK IF ROOT FILE, RECURSIVELY UPDATE GROUP MEMBERSHIP OF ROOT AND ALL OF ITS DESCENDANTS
+        if(group_name === null){
+
+            await removeGroupFromFile(target_file_id);
+    
+
+
+        }else{
+            const getGroupResult = await getGroup(group_name);
+            if(getGroupResult.rowCount ===0){
+                return res.status(404).send("No such group")
+            }
+
+            const group_id = parseInt(getGroupResult.rows[0].group_id);
+            console.log( "groupid",group_id);
+            const groupCheckResult = await groupCheck(token_id,group_id);
+            if(groupCheckResult.rowCount ===0){
+                return res.status(401).send("Not a member of this group")
+            }
+
+            await changeGroupForFile(target_file_id,group_id);
+
+
+        }
+
         
         return res.sendStatus(200);
         

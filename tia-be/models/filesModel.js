@@ -205,3 +205,95 @@ exports.childPrivlCheck = async function(file_id,privl){
         [file_id,privl]
     )
 }
+
+
+exports.checkIfRootNote = async function(file_id){
+    return pool.query(
+        `SELECT 1
+        FROM file_hierarchy fh
+        WHERE file_id2 = $1`,
+        [file_id]
+    )
+}
+
+
+
+/*----FOR ALL DESCENDANTS---*/
+//UPDATE
+exports.changeGroupForFile = async function(file_id,group_id){
+
+    const inGroup = await pool.query(
+        `SELECT 1
+        FROM group_files gf
+        WHERE gf.file_id = $1`,[file_id]);
+
+    if(inGroup.rowCount === 0){
+        return pool.query(
+            `WITH RECURSIVE descendants AS (
+                SELECT file_id2 
+                FROM file_hierarchy
+                WHERE file_id1 = $1
+    
+                UNION
+                
+                SELECT fh.file_id2
+                FROM file_hierarchy fh
+                JOIN descendants d ON fh.file_id1 = d.file_id2
+            )
+            INSERT INTO group_files (group_id, file_id)
+            
+            SELECT $2::int, file_id2
+            FROM descendants
+            UNION
+            SELECT $2::int, $1`,
+            [file_id, group_id]
+        );
+    }
+
+    return pool.query(
+        `WITH RECURSIVE descendants AS (
+            SELECT file_id2 
+            FROM file_hierarchy
+            WHERE file_id1 = $1
+
+            UNION
+            
+            SELECT fh.file_id2
+            FROM file_hierarchy fh
+            JOIN descendants d ON fh.file_id1 = d.file_id2
+        )
+        UPDATE group_files
+        SET group_id = $2
+        WHERE file_id IN (
+            SELECT file_id2
+            FROM descendants
+            UNION
+            SELECT $1) `,
+        [file_id, group_id]
+    )
+}
+
+//DELETE
+exports.removeGroupFromFile = async function(file_id){
+    return pool.query(
+        `WITH RECURSIVE descendants AS (
+            SELECT file_id2 
+            FROM file_hierarchy
+            WHERE file_id1 = $1
+
+            UNION
+            
+            SELECT fh.file_id2
+            FROM file_hierarchy fh
+            JOIN descendants d ON fh.file_id1 = d.file_id2
+        )
+        DELETE 
+        FROM group_files
+        WHERE file_id IN (
+            SELECT file_id2
+            FROM descendants
+            UNION
+            SELECT $1) `,
+        [file_id]
+    )
+}

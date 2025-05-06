@@ -200,7 +200,7 @@ async function changeAccessControl(file_id:Number,privl:number){
 
 }
 
-async function changeGroupMembership(file_id:Number, group_name:string){
+async function changeGroupMembership(file_id:Number, group_name:string |null){
     const response = await fetch(`/api/files/${file_id}/group`, {
         method: "POST",
         headers: {

@@ -119,7 +119,7 @@ exports.acceptFriendsRequests = async function(user_id_req, user_id_rec){
     const client = await pool.connect();
 
     try{
-        client.query('BEGIN');
+        await client.query('BEGIN');
 
         client.query(
             `DELETE 
@@ -163,7 +163,7 @@ exports.deleteFriendsRequests = async function(user_id1, user_id2){
     const client = await pool.connect();
 
     try{
-        client.query('BEGIN');
+        await client.query('BEGIN');
 
         client.query(
             `DELETE 

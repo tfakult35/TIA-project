@@ -61,13 +61,22 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   const [newName, setNewName] = useState<string>(fileNoteTree.getFileNote(file_id).file_name);
   const [accessValue, setAccessValue] = useState<number>(fileNoteTree.getFileNote(file_id).access_value);
 
+  const [groupOptions, setGroupOptions] = useState<string[]>([]);
+
   console.log(accessValue);
   console.log(menuVisible);
 
 
   const handleChangeGroup = async(e:React.MouseEvent<HTMLLIElement>)=>{
     e.stopPropagation();
-    
+    setGroupMenu(true);
+
+    try{
+      const groups = await getGroups();
+      setGroupOptions(groups.map((g:any) => g.group_name))
+    }catch (e){
+      toast.error("Couldn't load groups")
+    }
 
 
   }
@@ -145,6 +154,16 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     setAccessMenu(false);
     setMenuVisible(false);
   }
+
+  const submitGroup = async (group_name:string|null) => {
+
+    try {
+      await fileNoteTree.setFileNoteGroup(file_id, group_name);
+    }catch (e:any){toast.error(e.message || "Error")}
+
+    setGroupMenu(false);
+    setMenuVisible(false);
+  }
   return(
   <div className="contextMenu" ref= {menuRef} style ={{ position: 'absolute',
       top: `${positionY}px`,
@@ -187,12 +206,32 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           <b>{"Group:"}</b><br/>
           {fileNoteTree.getFileNote(file_id).group_name}<br/>
         </div>
+      ) : groupMenu ? (
+      
+      <div>
+
+
+        <ul>
+          {
+            groupOptions.map((g)=>(
+            <li key={g} onClick={()=>submitGroup(g)}>   
+                {g}
+            </li>))
+          }
+
+          <li onClick={()=>submitGroup(null)}> Remove group</li>
+        </ul>
+
+
+
+
+      </div>
       ) : (
         <ul>
           { isEditable && (<li onClick={handleCreate}>   New Note</li>)}
           { isEditable && (<li onClick={handleRename}>   Rename</li>)}
           { isEditable && (<li onClick={handleAccessControl}>   Access control</li>)}
-          { isEditable && (<li onClick={handleChangeGroup}>   Change group</li>)}
+          { isEditable && (fileNoteTree.getFileNote(file_id).parent_id === null) && (<li onClick={handleChangeGroup}>   Change group</li>)}
 
           <li onClick={handleGetInfo}>  Get Info</li>
           { isEditable && (<li onClick={handleDelete}>   Delete</li>)}

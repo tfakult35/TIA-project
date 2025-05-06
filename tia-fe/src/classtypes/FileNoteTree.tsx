@@ -158,10 +158,11 @@ class FileNoteTree{
 
     // CAN ONLY CHANGE ROOT NOTE FILES!! and it trickles down to children
 
-    public async setFileNoteGroup(id:Number, group_name:string){
+    public async setFileNoteGroup(id:Number, group_name:string|null){
         if(!this.rootIds.has(id)){
             return;
         }
+        
 
         try{
             await changeGroupMembership(id,group_name);
@@ -173,7 +174,7 @@ class FileNoteTree{
             const fileNote = this.idMap.get(currentId);
             if(!fileNote) return;
 
-            fileNote.group_name = group_name;
+            fileNote.group_name = group_name === null ? "" : group_name;
 
             const children = this.getChildrenId(currentId);
             
