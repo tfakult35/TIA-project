@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getGroups, getGroupsReqs, createNewGroup } from "../services/groupService";
+import { getGroups, getGroupsReqs, createNewGroup, leaveGroup } from "../services/groupService";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -63,6 +63,16 @@ const MyGroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
     }
 
 
+
+    const handleLeaveGroup = async(group_name:string) =>{
+        try{
+            await leaveGroup(group_name);
+            setGroups((curr)=>curr.filter((g)=>(g !== group_name)));
+        }catch(e:any){
+            toast.error(e.message);
+        }
+    }
+
     return(
 
         <div className="page1">
@@ -74,7 +84,7 @@ const MyGroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
                     <li>You not in a group.</li>)}
                 {groups.map((grp, index) => (
                     <li key={index}> 
-                        <Link to={`/groups/${grp}`}> { grp } </Link>
+                        <Link to={`/groups/${grp}`}> { grp } </Link> <button onClick={()=>handleLeaveGroup(grp)}>LEAVE GROUP</button>
                     </li> 
                 ))}
             </ul>

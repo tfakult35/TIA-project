@@ -20,6 +20,25 @@ async function createNewGroup(group_name:string){
     return;
 }
 
+async function leaveGroup(group_name:string){
+
+    const response = await fetch(`/api/groups/`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": localStorage.getItem("token") || ""
+        },
+        body: JSON.stringify({ "group_name": group_name  })
+    });
+
+
+    if(!response.ok){
+        const errorm = await response.text();
+        throw new Error(errorm);
+    }
+
+    return;
+}
 
 async function searchGroups(prefix:string){
     const response = await fetch(`/api/groups/search/${prefix}`, {
@@ -133,4 +152,4 @@ async function getGroupMembers(group_name:string){
 
 
 
-export {searchGroups, getGroups,getGroupsReqs, getGroupMembers, createNewGroup}
+export {searchGroups, getGroups,getGroupsReqs, getGroupMembers, createNewGroup, leaveGroup}

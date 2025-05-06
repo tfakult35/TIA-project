@@ -1,5 +1,5 @@
 const express = require('express');
-const {searchGroups, getGroupMembers,getGroup, createGroup} = require('../../models/groupModels');
+const {searchGroups, getGroupMembers,getGroup, createGroup, leaveGroup} = require('../../models/groupModels');
 const {groupCheck} = require('../../models/usersModel')
 const {determineLogInJWT,logInRequire} = require('../../utils/authHelp');
 
@@ -20,6 +20,37 @@ router.post('/', determineLogInJWT, logInRequire, async (req,res)=>{
         return res.status(200).end();
     }catch (e){
         return res.status(500).send("API error");
+    }
+
+})
+
+/*****LEAVE GROUP *********/
+router.delete('/',determineLogInJWT,logInRequire, async(req,res)=>{
+    const token_id = req.user;
+    const group_name = req.body["group_name"];
+
+    if(!group_name){
+        return res.status(400).send("Invalid group name");
+    }
+
+
+    try{
+        const getGroupResult = await getGroup(group_name);
+        if(getGroup.rowCount ===0){
+            return res.status(404).send("No such group");
+        }
+
+        const group_id = getGroupResult.rows[0].group_id;
+
+        await leaveGroup(token_id,group_id);
+
+        return res.status(200).end();
+
+
+
+        
+    }catch (e){
+        return res.status(500).send("API error")
     }
 
 })
@@ -65,6 +96,7 @@ router.get('/members/:group_name',determineLogInJWT,logInRequire, async (req,res
         return res.status(500).send("Api error")
     }
 })
+
 
 
 

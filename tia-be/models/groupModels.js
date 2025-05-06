@@ -33,6 +33,55 @@ exports.getGroupMembers = async function(group_name){
     )
 }
 
+
+exports.leaveGroup = async function(user_id, group_id){
+    const grpMemberResult = await pool.query(
+        `SELECT * FROM group_members gm WHERE group_id = $1`,
+        [group_id]
+    )
+
+    //WHEN THE LAST MEMBER DELETE GROUP
+    if(grpMemberResult.rowCount === 1){
+
+        return pool.query(
+            `DELETE FROM groups WHERE groups.group_id = $1`,
+            [group_id]
+        )
+    }
+
+    //WHEN NOT THE LAST DELETE MEMBERSHIP AND UPDATE ALL FILES WITH THE GROUP
+    
+    const client = await pool.connect();
+
+    try{
+        await client.query('BEGIN');
+
+        await client.query(
+            `DELETE
+            FROM group_files gf
+            WHERE gf.group_id = $2 AND gf.file_id IN 
+            (SELECT file_id FROM files WHERE files.user_id = $1)`,
+            [user_id,group_id]
+        )
+
+        await client.query(
+            `DELETE
+            FROM group_members
+            WHERE user_id = $1 AND group_id = $2`,
+            [user_id, group_id]
+        )
+        
+        await client.query('COMMIT');
+
+    }catch (e){
+        await client.query('ROLLBACK');
+    }finally{
+        client.release();
+    }
+   
+
+}
+
 exports.createGroup = async function(user_id,group_name){
 
     const client = await pool.connect();
