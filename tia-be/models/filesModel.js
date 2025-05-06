@@ -166,17 +166,11 @@ exports.renameFile = async function(file_id, file_name){
 }
 
 
-//-------SET PRIVL-----------
-exports.setPrivl = async function(file_id,privl){
-    return pool.query(
-        "UPDATE access_values SET access_value = $2 WHERE file_id = $1",
-        [file_id, privl]
-    )
-}
+
 
 //--- for checking limit --- if parent has higher privl level- then not accept
-exports.privlCheck = async function(file_id,privl){
-    return pool.query(
+exports.privlCheck = async function(file_id,privl,client=pool){
+    return client.query(
         `SELECT 1
         FROM file_hierarchy fh
         JOIN access_values av ON av.file_id = fh.file_id1
@@ -185,8 +179,8 @@ exports.privlCheck = async function(file_id,privl){
     )
 }
 
-exports.childPrivlCheck = async function(file_id,privl){
-    return pool.query(
+exports.childPrivlCheck = async function(file_id,privl,client=pool){
+    return client.query(
         `WITH RECURSIVE descendants AS (
             SELECT file_id2 
             FROM file_hierarchy
@@ -206,6 +200,38 @@ exports.childPrivlCheck = async function(file_id,privl){
     )
 }
 
+
+//-------SET PRIVL-----------
+exports.setPrivl = async function(file_id,privl){
+    const client = await pool.connect();
+
+    
+
+    try{
+
+        await client.query('BEGIN');
+
+        await exports.privlCheck(file_id,privl,client);
+
+        await exports.childPrivlCheck(file_id,privl,client)
+
+        await client.query(
+            "UPDATE access_values SET access_value = $2 WHERE file_id = $1",
+            [file_id, privl])
+        
+
+
+        await client.query('COMMIT');
+
+    }
+    catch(e){
+        await client.query('ROLLBACK');
+        throw e;
+
+    }finally{
+        client.release();
+    }
+}
 
 exports.checkIfRootNote = async function(file_id){
     return pool.query(

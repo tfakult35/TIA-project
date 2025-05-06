@@ -7,8 +7,13 @@ const { getFriends, getUser, getUserById, getFriendsRequests,
         createFriendsRequests, checkFriendship, acceptFriendsRequests, 
         getAllFriendsRequests, deleteFriendsRequests, deleteFriendship,
         updateUserDesc,getGroups,
-        searchUsers} = require('../../models/usersModel');
-const {determineLogInJWT} = require('../../utils/authHelp')
+        searchUsers,
+        getGroupsReqs,
+        groupCheck,
+        sendGroupInvite,
+        acceptGroupInvite} = require('../../models/usersModel');
+const {determineLogInJWT, logInRequire} = require('../../utils/authHelp');
+const { getGroup } = require('../../models/groupModels');
 
 
 //--------------POST bio, your own--------------
@@ -282,14 +287,27 @@ router.get('/friends_requests',determineLogInJWT, async (req,res)=>{
 
 
 /*------- GET USER GROUPS--------- */
-router.get('/groups',determineLogInJWT, async (req,res)=>{
+router.get('/groups',determineLogInJWT, logInRequire, async (req,res)=>{
     const token_id = req.user;
-    if(token_id === null){
-        return res.status(401).send("Log in is required");
-    }
-
+    
     try{
         const result = await getGroups(token_id);
+        return res.status(200).json(result.rows);
+    }catch (e){
+        console.log(e);
+        return res.status(500).send("Database error");
+    }
+
+
+});
+
+
+/*----------GET USER GROUP REQS --------*/
+router.get('/groups_reqs',determineLogInJWT, logInRequire, async (req,res)=>{
+    const token_id = req.user;
+
+    try{
+        const result = await getGroupsReqs(token_id);
         return res.status(200).json(result.rows);
     }catch (e){
         console.log(e);
@@ -315,6 +333,86 @@ router.get('/search/:prefix', async (req,res)=>{
         return res.status(500).send("Database error")
     }
 })
+
+router.post('/groups_reqs/:group_name', determineLogInJWT,logInRequire, async(req,res)=>{
+    const token_id = req.user;
+    const group_name = req.params.group_name;
+    const username = req.body["username"];
+
+
+    if(!group_name){
+        console.log("invalid group");
+        return res.status(404).send("Invalid group name")
+    }
+
+    if(!username){
+        console.log("invalid user");
+        return res.status(404).send("Invalid username")
+
+    }
+
+    try{
+
+
+
+        const getGroupResult = await getGroup(group_name);
+        if(getGroupResult.rowCount === 0){
+            console.log("no such group",group_name)
+            return res.status(404).send("No such group");
+        }
+
+        const userResult =  await getUser(username);
+        if(userResult.rowCount ===0){
+            return res.status(404).send("No such user");
+        }
+
+        const target_id = userResult.rows[0].user_id;
+        const group_id = getGroupResult.rows[0].group_id;
+
+        //check if token_id part of the group
+        
+        const groupCheckResult = await groupCheck(token_id, group_id);
+        if(groupCheckResult.rowCount === 0){
+            console.log("tokenid",token_id);
+            return res.status(401).send("You are not a member of this group")
+        }
+
+        const groupCheckTarget = await groupCheck(target_id,group_id);
+        if(groupCheckTarget.rowCount !== 0){
+            console.log("group check fail")
+            return res.status(400).send("Target is already member of this group")
+        }
+
+        await sendGroupInvite(target_id,group_id);
+        return res.status(200).end();
+
+
+
+    }catch(e){
+        console.log(e);
+        return res.status(500).send("API Error")
+    }
+
+
+})
+
+router.post('/groups_reqs/:group_name/reply', determineLogInJWT,logInRequire, async(req,res)=>{
+    const token_id = req.user;
+    const group_name = req.params.group_name;
+    const accept = req.body["accept"];
+    console.log("reply");
+    try{
+
+        await acceptGroupInvite(token_id,group_name,accept);
+        return res.status(200).end();
+
+    }catch(e){
+        console.log(e);
+        return res.status(500).send("API Error")
+    }
+
+})
+
 
 
 

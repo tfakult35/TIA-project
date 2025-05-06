@@ -5,6 +5,7 @@ import { getUserDesc, checkFriendship,addFriend, deleteFriend} from "../services
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast"
 import { Link } from "react-router-dom";
+import { getGroups, inviteToGroup } from "../services/groupService";
 
 
 interface AccountPageProps{
@@ -18,6 +19,8 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
     const [friendsWith,setFriendsWith] = useState<number|undefined>(undefined); //not friends = 0, friends = 1, friends request pending = 2
 
     const [currUsername,setCurrUsername] = useState<string|undefined>(undefined);
+
+    const [menuVisible, setMenuVisible] = useState<boolean>(false);
     
 
     const editor = useEditor({
@@ -45,6 +48,9 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
                 .then((result2)=>{
                     console.log("result2", result2)
                     setFriendsWith(result2);
+
+                  
+
                 })
                 
             }
@@ -82,6 +88,35 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
         }
     }
 
+
+    const [positionX, setPositionX] = useState<number>(0);
+    const [positionY, setPositionY] = useState<number>(0);
+    const [ownGroups, setOwnGroups] = useState<string[]>([]);
+    
+    const handleInviteGroup = async (e:React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        try{
+            const result = await getGroups();
+            setOwnGroups(result.map((x:any)=>x.group_name));
+            setPositionX(e.clientX);
+            setPositionY(e.clientY);
+            setMenuVisible(true);
+        }catch(e:any){
+            toast.error(e.message);
+            setMenuVisible(false);
+        }
+      }
+      
+    const handlePickGroup = async (group_name:string) =>{
+        try{
+            if(currUsername === undefined){return};
+            await inviteToGroup(group_name, currUsername);
+        }catch(e:any){
+            toast.error(e.message);
+        }
+        setMenuVisible(false);
+    }
+
     /* ---------------------------------------------------------------- */
     
     //rerenders too much?
@@ -115,6 +150,37 @@ const AccountPage: React.FC<AccountPageProps> = (({isLoggedIn}) =>{
                         </>
 
                     ) )}
+
+                    {(isLoggedIn && friendsWith !==3) && friendsWith !== undefined && (
+                        <>
+
+                        {menuVisible && (
+                        <div className="contextMenu" style ={{ position: 'absolute',
+                            top: `${positionY}px`,
+                            left: `${positionX}px`,
+                            zIndex: 1000,
+                            }}> 
+
+                            <ul>
+                            <li onClick={()=>setMenuVisible(false)}>Close menu</li>
+
+                                {ownGroups.map((grp,index)=>
+                                    (<li onClick={()=>(handlePickGroup(grp))} 
+                                    key={index}>
+                                    
+                                        {grp}
+                                    
+                                    </li>)
+                                )}
+                            </ul>
+                        </div>
+                        )}
+                                            
+                        <button onClick={handleInviteGroup}>INVITE TO GROUP</button>
+
+                        </>
+                    )}
+                    
                     <EditorContent editor={editor} className="tiptap-editor-bio" />
 
                 </div>

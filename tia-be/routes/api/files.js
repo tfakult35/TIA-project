@@ -267,15 +267,7 @@ router.post("/:file_id/access",determineLogInJWT, logInRequire, async(req,res) =
             return res.status(401).send("You are not the owner of this file");
         }
 
-        const privlCheckResult = await privlCheck(target_file_id,privl); //CHECK PRIVL
-        if(privlCheckResult.rowCount > 0){
-            return res.status(400).send("Parent privl higher than child privl");
-        }
-
-        const childPrivlCheckResult = await childPrivlCheck(target_file_id,privl);
-        if(childPrivlCheckResult.rowCount > 0){
-            return res.status(400).send("Descendant privl lower than set new privl")
-        }
+        
 
         await setPrivl(target_file_id, privl);
         return res.sendStatus(200);

@@ -41,9 +41,9 @@ const SearchPage: React.FC = () => {
 
     return(
 
-        <div>
+        <div className="page2">
             <div>
-                <h2>Search for an account</h2>
+                <h2>Search</h2>
                 <input value={searchInput} onChange={(e) => setSearchInput(e.target.value)}></input>          
                 <button onClick ={handleSearch}>SEARCH</button>
                 <label><input type="radio" name="access" value={0} onChange={handleSearchWhat} checked={searchWhat===0} /> Accounts</label>
@@ -52,6 +52,7 @@ const SearchPage: React.FC = () => {
             </div>
             <div>
                 
+                <div className="listing1">
                 {searchResult !== undefined && (
                     <ul>
                         {   searchResult.length > 0 ? (
@@ -69,6 +70,7 @@ const SearchPage: React.FC = () => {
                         }      
                     </ul>
                 )}
+                </div>
             </div>
         </div>
 

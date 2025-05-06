@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getGroups, getGroupsReqs, createNewGroup, leaveGroup } from "../services/groupService";
+import { getGroups, getGroupsReqs, createNewGroup, leaveGroup, groupReply } from "../services/groupService";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -73,10 +73,27 @@ const MyGroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
         }
     }
 
+    const handleRequestReply = async(group_name:string, accept:boolean) =>{
+        try{
+            await groupReply(group_name,accept);
+            setGroupReqs((curr)=>curr.filter((g)=>(g !== group_name)));
+            if(accept){
+                setGroups([...groups,group_name])
+            }
+        }catch(e:any){
+            toast.error(e.message);
+        }
+    }
+
     return(
 
-        <div className="page1">
+        <div>
 
+            <div className='container'>
+
+            <div className ='row'>
+
+            <div className ='col-md-6'>
             <h2>My groups</h2>
             <div className="listing1">
             <ul>
@@ -108,21 +125,28 @@ const MyGroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
                     />
                 </div>) }
 
+            </div>
+
+            <div className='col-md-6'>
             <h2>Group requests</h2>
-            <div>
+            <div className="listing1">
                 <ul>
                 {(groupReqs.length === 0) && (
-                    <li>You not in a group.</li>)}
+                    <li>You have no group requests.</li>)}
                 {groupReqs.map((grp, index) => (
                     <li key={index}> 
                         <Link to={`/groups/${grp}`}> { grp } </Link>
-                        <button>ACCEPT</button>
-                        <button>DENY</button>
+                        <button onClick={()=>(handleRequestReply(grp,true))}>ACCEPT</button>
+                        <button onClick={()=>(handleRequestReply(grp,false))}> DENY </button>
                     </li> 
                 ))}
                 </ul>
             </div>
 
+
+            </div>
+            </div>
+            </div>
         </div>
 
     )

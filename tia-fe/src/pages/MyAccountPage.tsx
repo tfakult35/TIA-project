@@ -99,7 +99,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = (({isLoggedIn}) =>{
         )
     }else{
         return(
-            <div className="page1">
+            <div className="page">
 
                 <div className='container'>
 

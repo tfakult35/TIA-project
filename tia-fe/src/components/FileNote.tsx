@@ -145,6 +145,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 
 
   const submitAccess = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
     const value = parseInt(e.target.value);
     setAccessValue(value);
     try {
@@ -155,7 +156,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     setMenuVisible(false);
   }
 
-  const submitGroup = async (group_name:string|null) => {
+  const submitGroup = async (group_name:string|null) => { //stop propagation?
 
     try {
       await fileNoteTree.setFileNoteGroup(file_id, group_name);
@@ -168,6 +169,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   <div className="contextMenu" ref= {menuRef} style ={{ position: 'absolute',
       top: `${positionY}px`,
       left: `${positionX}px`,
+      zIndex: 1000,
       backgroundColor: 'grey',}}>
     {renaming ? (
         <div>

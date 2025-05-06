@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import toast from "react-hot-toast"
 import { useEffect, useState } from 'react';
 import { getGroupMembers } from '../services/groupService';
-import { EditorContent, useEditor } from "@tiptap/react";
+import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
 
@@ -64,8 +64,8 @@ const GroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
     
     return(
 
-        <div className='page1'>
-
+        <div className='page2'>
+            <div>
             <h2>{group_name}</h2>
             <br/>
 
@@ -81,6 +81,8 @@ const GroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
                 </div>
                 </>
             )}
+
+            </div>
 
         </div>
 

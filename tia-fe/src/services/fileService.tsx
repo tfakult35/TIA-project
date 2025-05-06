@@ -85,7 +85,7 @@ async function getFileContent(file_id: number): Promise<string> {
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("You are not logged in");
+            throw new Error("Error getting file content");
         }
     }
 
@@ -107,7 +107,7 @@ async function createFileNote(file_name:string, parent_file_id:number|null){
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("ERROR createFIleNote");
+            throw new Error("ERROR creating file note");
         }
     }
     
@@ -129,7 +129,7 @@ async function setContent(file_id:number,content:string){
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("ERROR createFIleNote");
+            throw new Error("ERROR setting file content");
         }
     }
 
@@ -151,7 +151,7 @@ async function deleteFileNote(file_id:Number){
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("You are not logged in");
+            throw new Error("ERROR deleting file");
         }
     }
 }
@@ -170,7 +170,7 @@ async function rename(file_id:Number, file_name:string){
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("ERROR RenameFileNote");
+            throw new Error("ERROR renaming file");
         }
     }
 
@@ -192,7 +192,7 @@ async function changeAccessControl(file_id:Number,privl:number){
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("ERROR ChangeAccessControl");
+            throw new Error("ERROR changing access control");
         }
     }
 
@@ -214,7 +214,7 @@ async function changeGroupMembership(file_id:Number, group_name:string |null){
         if (response.status >= 500) {
             throw new Error("API error");
         } else {
-            throw new Error("ERROR changeGroupMembership");
+            throw new Error("ERROR changing group membership");
         }
     }
 

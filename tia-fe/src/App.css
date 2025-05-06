@@ -3,6 +3,7 @@
 .app-fe, html {
   background: linear-gradient(45deg,#514c3d,#2f2f2f);
   height:100vh;
+  color:white;
 }
 
 
@@ -60,23 +61,39 @@ button:active{
 
 /*--------------ACCOUNT PAGE----------------*/
 .page1 {
-  background-color: #2f2f2f;
-  color: white;
-  width: 80%;
-  margin: auto;
-  padding-top: 2%;
-  padding-inline: 5%;
+  background:#2f2f2f;
+  color:white;
+  border: solid;
+  border-width: thin;
+  border-color: gray;
 }
+
+.page2{
+  color:white;
+  display:flex;
+  flex-direction: column;
+  margin-left:auto;
+  margin-right:auto;
+  width:fit-content;
+  text-align: center;
+
+}
+
 
 
 /*------------CONTEXT MENU----------*/
 
 .contextMenu {
   min-width: 10em;
+  max-height:15em;
   width: 8%;
   border: solid;
   border-color: rgb(187, 187, 187);
   border-width: thin;
+  overflow-x: auto;
+  overflow-y: auto;
+  background-color: gray;
+
 }
 
 .contextMenu ul{
@@ -93,7 +110,7 @@ button:active{
   border: solid;
   border-color: grey;
   border-width: thin;
-    
+  
   margin:1%;
 }
 
@@ -123,6 +140,7 @@ button:active{
 
 .listing1 {
   background-color:#383838;
+  text-align: left;
   max-height: 8em;
   height:8em;
   border: solid;

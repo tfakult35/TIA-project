@@ -213,6 +213,21 @@ exports.getGroups = async function(user_id){
 }
 
 
+/*-----------GET GROUPS REQS -------------*/
+exports.getGroupsReqs = async function(user_id){
+    return pool.query(
+        `SELECT g.group_name
+        FROM groups g
+        JOIN groups_requests gr ON g.group_id = gr.group_id
+        WHERE gr.user_id = $1
+        ORDER BY g.group_name`,
+        [user_id]
+    )
+    
+}
+
+
+
 /*------CHECK IF IN GROUP ------*/
 
 exports.groupCheck = async function(user_id,group_id){
@@ -222,4 +237,59 @@ exports.groupCheck = async function(user_id,group_id){
         WHERE gm.user_id = $1 AND gm.group_id =$2`,
         [user_id,group_id]
     )
+}
+
+exports.sendGroupInvite = async function(user_id,group_id){
+    return pool.query(
+        `INSERT INTO groups_requests (group_id, user_id)
+        VALUES ($2,$1)
+        `,
+        [user_id,group_id]
+    )
+}
+
+exports.acceptGroupInvite = async function(user_id,group_name, accept){
+    
+    
+
+
+    const client = await pool.connect();
+
+    
+    try{
+
+
+        await client.query('BEGIN');
+
+        const result1 =  await client.query(
+            `SELECT g.group_id
+            FROM groups g
+            WHERE g.group_name = $1`,
+            [group_name])
+
+        
+        const group_id = result1.rows[0].group_id; 
+
+        await client.query(
+            `DELETE 
+            FROM groups_requests gr
+            WHERE gr.user_id = $1 AND gr.group_id= $2`,
+        [user_id, group_id]);
+        
+        if(accept === true){
+            await client.query(
+                `INSERT INTO group_members (group_id, user_id) 
+                VALUES ($1,$2)`,
+            [group_id, user_id]);
+        }
+    
+        await client.query('COMMIT');
+
+    }catch (e){
+        await client.query('ROLLBACK');
+    }finally{
+        client.release();
+    }
+
+    
 }
