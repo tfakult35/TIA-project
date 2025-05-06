@@ -60,7 +60,7 @@ exports.leaveGroup = async function(user_id, group_id){
             `DELETE
             FROM group_files gf
             WHERE gf.group_id = $2 AND gf.file_id IN 
-            (SELECT file_id FROM files WHERE files.user_id = $1)`,
+            (SELECT f.file_id FROM files f JOIN user_files uf ON uf.file_id = f.file_id WHERE uf.user_id = $1)`,
             [user_id,group_id]
         )
 
@@ -75,6 +75,7 @@ exports.leaveGroup = async function(user_id, group_id){
 
     }catch (e){
         await client.query('ROLLBACK');
+        throw(e);
     }finally{
         client.release();
     }
@@ -107,6 +108,7 @@ exports.createGroup = async function(user_id,group_name){
 
     }catch (e){
         await client.query('ROLLBACK');
+        throw(e);
     }finally{
         client.release();
     }

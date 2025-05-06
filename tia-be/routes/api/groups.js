@@ -19,6 +19,7 @@ router.post('/', determineLogInJWT, logInRequire, async (req,res)=>{
         await createGroup(token_id,group_name);
         return res.status(200).end();
     }catch (e){
+        console.log(e);
         return res.status(500).send("API error");
     }
 
@@ -50,6 +51,7 @@ router.delete('/',determineLogInJWT,logInRequire, async(req,res)=>{
 
         
     }catch (e){
+        console.log(e);
         return res.status(500).send("API error")
     }
 

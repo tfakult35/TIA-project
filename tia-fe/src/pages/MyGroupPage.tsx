@@ -43,7 +43,7 @@ const MyGroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
     } 
 
 
-    const handleCreateNewGroup = ()=>{
+    const handleCreateNewGroup = async()=>{
         setNameInput(true);
     }
 
@@ -51,7 +51,7 @@ const MyGroupPage: React.FC<GroupPageProps> = ({isLoggedIn}) => {
         const cleanedName = newName.replace(/[^a-zA-Z0-9]/g, '');
          if(cleanedName.trim() === '') return;
 
-        try{
+        try{ 
             await createNewGroup(cleanedName);
             setGroups([...groups,cleanedName])
 
