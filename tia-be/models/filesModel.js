@@ -159,3 +159,24 @@ exports.privlCheck = async function(file_id,privl){
         `, [file_id,privl]
     )
 }
+
+exports.childPrivlCheck = async function(file_id,privl){
+    return pool.query(
+        `WITH RECURSIVE descendants AS (
+            SELECT file_id2 
+            FROM file_hierarchy
+            WHERE file_id1 = $1
+
+            UNION
+            
+            SELECT fh.file_id2
+            FROM file_hierarchy fh
+            JOIN descendants d ON fh.file_id1 = d.file_id2
+        )
+        SELECT av.file_id
+        FROM descendants d
+        JOIN access_values av ON av.file_id = d.file_id2
+        WHERE av.access_value < $2`,
+        [file_id,privl]
+    )
+}

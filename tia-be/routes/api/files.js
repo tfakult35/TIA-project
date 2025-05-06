@@ -6,7 +6,7 @@ var router = express.Router();
 
 var {getUserFileHeaders,getFileOwner, getFileContent, 
     createNewFile, setContent,removeFile,renameFile,
-    setPrivl, privlCheck, getGroupFileHeaders} = require('../../models/filesModel');
+    setPrivl, privlCheck, getGroupFileHeaders, childPrivlCheck} = require('../../models/filesModel');
 var {determineLogInJWT,getRelativePrivilege,logInRequire} = require('../../utils/authHelp');
 const { getUserGroups, getAmountOfNotes, getUser, groupCheck } = require('../../models/usersModel');
 const { getGroup } = require('../../models/groupModels');
@@ -271,6 +271,12 @@ router.post("/:file_id/access",determineLogInJWT, logInRequire, async(req,res) =
         if(privlCheckResult.rowCount > 0){
             return res.status(400).send("Parent privl higher than child privl");
         }
+
+        const childPrivlCheckResult = await childPrivlCheck(target_file_id,privl);
+        if(childPrivlCheckResult.rowCount > 0){
+            return res.status(400).send("Descendant privl lower than set new privl")
+        }
+
         await setPrivl(target_file_id, privl);
         return res.sendStatus(200);
         

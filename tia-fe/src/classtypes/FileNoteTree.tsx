@@ -1,5 +1,5 @@
 import FileNoteHeaderType from "./FileNoteHeaderType";
-import { createFileNote, deleteFileNote, rename, changeAccessControl} from "../services/fileService";
+import { createFileNote, deleteFileNote, rename, changeAccessControl, changeGroupMembership} from "../services/fileService";
 
 class FileNoteTree{
     
@@ -105,13 +105,42 @@ class FileNoteTree{
         }
     }
 
+    //TODO redo so it gives error instead of changes children, have to do in backend aswell
     //-----------SET ACCESS CONTROL, ALL CHILDREN WITH LOWER ACCESS VAL CHANGE TOO-------
     public async setAccessControl(id:Number, privl:number){
         if(!this.idMap.get(id) ) return;
         //must change if parent is higher privl then you cant change
         const parent_id = this.getFileNote(id).parent_id
+        
+        
         if((parent_id !== null) && (this.getFileNote(parent_id).access_value > privl )){
             throw new Error("Parent can't have higher access value than child")
+        }
+
+        const checkDescendantRec = (currentId: Number): boolean =>{
+            
+
+            const children= this.getChildrenFN(currentId);
+            for(const child of children){
+                if(child.access_value < privl){
+                    return false;
+                }
+
+                if(!checkDescendantRec(child.file_id)){
+                    return false;
+                }
+            }
+
+
+            return true;
+
+
+        }
+
+
+        const checkDescendantRecResult = checkDescendantRec(id);
+        if(!checkDescendantRecResult){
+            throw new Error("A child can't have lower access value than ancestor file")
         }
 
         try{
@@ -120,16 +149,37 @@ class FileNoteTree{
         }catch(e){
             throw e;
         }
-        for(const child of this.getChildrenFN(id)){
-            if(child.access_value < privl) {
-                await this.setAccessControl(child.file_id,privl);
-                
-            }
-        }
 
         
     }
 
+
+    /*-----------CHANGE GROUP OF FILE--------------*/
+
+    // CAN ONLY CHANGE ROOT NOTE FILES!! and it trickles down to children
+
+    public async setFileNoteGroup(id:Number, group_name:string){
+        if(!this.rootIds.has(id)){
+            return;
+        }
+
+        const groupNameRec = (currentId:Number) =>{
+            const fileNote = this.idMap.get(currentId);
+            if(!fileNote) return;
+
+            fileNote.group_name = group_name;
+
+            const children = this.getChildrenId(currentId);
+            
+            for(const childId of children){
+                groupNameRec(childId);
+            }
+            
+        }
+
+        groupNameRec(id);
+        await changeGroupMembership(id,group_name);
+    }
 
     //---------------------------------------------
 

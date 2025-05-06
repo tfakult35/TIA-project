@@ -2,6 +2,7 @@ import FileNoteType from "../classtypes/FileNoteHeaderType"
 import { useEffect, useRef, useState } from "react"
 import FileNoteTree from "../classtypes/FileNoteTree";
 import toast from "react-hot-toast"
+import { getGroups } from "../services/groupService";
 
 
 
@@ -39,6 +40,8 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         setMenuVisible(false);
         setRenaming(false);
         setInfoMenu(false);
+        setGroupMenu(false);
+        setAccessMenu(false);
       }
     }
 
@@ -54,14 +57,20 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   const [renaming, setRenaming] = useState<boolean>(false);
   const [accessMenu, setAccessMenu] = useState<boolean>(false);
   const [infoMenu, setInfoMenu] = useState<boolean>(false);
-
-  console.log(menuVisible);
-  
+  const [groupMenu, setGroupMenu] = useState<boolean>(false);  
   const [newName, setNewName] = useState<string>(fileNoteTree.getFileNote(file_id).file_name);
   const [accessValue, setAccessValue] = useState<number>(fileNoteTree.getFileNote(file_id).access_value);
 
   console.log(accessValue);
+  console.log(menuVisible);
 
+
+  const handleChangeGroup = async(e:React.MouseEvent<HTMLLIElement>)=>{
+    e.stopPropagation();
+    
+
+
+  }
 
   const handleCreate = async (e:React.MouseEvent<HTMLLIElement>)=>{
     e.stopPropagation();
@@ -175,6 +184,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           {new Date(fileNoteTree.getFileNote(file_id).modified_time).toLocaleString()}<br/>
           <b>{"Access value:"}</b><br/>
           {fileNoteTree.getFileNote(file_id).access_value} <br/>
+          <b>{"Group:"}</b><br/>
           {fileNoteTree.getFileNote(file_id).group_name}<br/>
         </div>
       ) : (
@@ -182,6 +192,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           { isEditable && (<li onClick={handleCreate}>   New Note</li>)}
           { isEditable && (<li onClick={handleRename}>   Rename</li>)}
           { isEditable && (<li onClick={handleAccessControl}>   Access control</li>)}
+          { isEditable && (<li onClick={handleChangeGroup}>   Change group</li>)}
 
           <li onClick={handleGetInfo}>  Get Info</li>
           { isEditable && (<li onClick={handleDelete}>   Delete</li>)}

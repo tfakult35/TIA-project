@@ -199,5 +199,9 @@ async function changeAccessControl(file_id:Number,privl:number){
     return response;
 
 }
+
+async function changeGroupMembership(file_id:Number, group_name:string){
+
+}
 export{buildFileNoteTree, getFileContent, createFileNote,
-    setContent,deleteFileNote,rename,changeAccessControl};
+    setContent,deleteFileNote,rename,changeAccessControl, changeGroupMembership};
