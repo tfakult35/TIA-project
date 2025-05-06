@@ -101,14 +101,17 @@ async function getGroupMembers(group_name:string){
     if(!response.ok){
         if (response.status >= 500) {
             throw new Error("API error");
+        } else if (response.status === 401){
+            throw new Error("Permission");  /// if he has no permission to check we catch the error
         } else {
-            throw new Error("Error!");
+            throw new Error("Error!")
         }
     }
 
     const result = await response.json();
     return result;
 }
+
 
 
 export {searchGroups, getGroups,getGroupsReqs, getGroupMembers}
